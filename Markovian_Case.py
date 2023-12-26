@@ -15,9 +15,9 @@ import numpy as np
 
 #We introduce a random discrete time grid with β > 0 a fixed positive constant,
 #(τ_i)i>0 be a sequence of i.i.d. E(β)-exponential random variables.
-def RandomTimeGrid(nBeta, nSamples, nT):
+def RandomTimeGrid(fBeta, nSamples, nT):
     # Generate i.i.d. exponential random variables
-    arrTau = np.random.exponential(scale=1/nBeta, size=nSamples)
+    arrTau = np.random.exponential(scale=1/fBeta, size=nSamples)
 
     # Create the time grid (T_k)k≥0
     arrT = np.minimum(np.cumsum(tau), nT)
@@ -28,9 +28,9 @@ def RandomTimeGrid(nBeta, nSamples, nT):
     return arrT, nN_t
 
 
-def Unbiased_Simulation_Markovian_Case(arrX0, funcMu, arrSigma, nBeta, nSamples, nT, nDim):
+def Unbiased_Simulation_Markovian_Case(funcG, arrX0, funcMu, arrSigma, fBeta, nSamples, nT, nDim):
     # Get a random discrete time grid
-    arrTimeGrid, nN_t = RandomTimeGrid(nBeta, nSamples, nT)
+    arrTimeGrid, nN_t = RandomTimeGrid(fBeta, nSamples, nT)
 
     # Get the number of steps for the Euler Scheme
     nSteps = len(arrTimeGrid)
@@ -63,28 +63,28 @@ def Unbiased_Simulation_Markovian_Case(arrX0, funcMu, arrSigma, nBeta, nSamples,
         for k in range(1, nN_t + 1):
             fProdW1 *= ((funcMu(arrTimeGrid[k], arrX_hat[k]) - funcMu(arrTimeGrid[k-1], arrX_hat[k-1]))*arrSigma_transpose_inv*arrDeltaW[k + 1])/arrDeltaT[k + 1]
 
-    return arrX_hat
+        Psi_hat = np.exp(fBeta*nT)*(funcG(arrX_hat[-1]) - funcG(arrX_hat[nN_t]))*fBeta**(-nN_t)*fProdW1
+
+    else :
+        Psi_hat = np.exp(fBeta*nT)*funcG(arrX_hat[-1])
+
+    return Psi_hat
+
+
+
+
 
 # Example usage:
-# Assuming mu, sigma, and time_grid are defined appropriately
-x0_value = np.array([0, 0])  # Initial value for X
-dimension = 2  # Dimension of the Brownian motion
-
-# Simulate using Euler scheme
-resulting_X = simulate_Euler_scheme(x0_value, mu_function, sigma_value, time_grid, dimension)
-
-
-
-
-
 
 # Parameters
 t_value = 10  # Value of t
 beta_value = 0.5  # Beta constant
 num_samples_value = 1000  # Number of samples
 
-# Simulate unbiased grid
-time_grid, max_index = simulate_unbiased_grid(t_value, beta_value, num_samples_value)
+
+
+
+
 
 print("Time Grid Tk:", time_grid)
 print("Nt (max index where Tk < t):", max_index)

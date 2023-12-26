@@ -32,3 +32,4 @@ def EulerScheme_Numex3(m, N, sigma, K, x, T):
 m, N, sigma, K, x, T = 10, 10**6, 0.2, 1, 1, 1
 statistical_error = EulerScheme_Numex3(m, N, sigma, K, x, T)
 print("Statistical error:", statistical_error)
+

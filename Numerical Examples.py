@@ -16,7 +16,7 @@ Beta = 0.1  # Beta constant
 Sigma_0 = 0.5
 def funcMu (t,x) :
     return np.cos(x)*Mu_0
-T = 10
+T = 1
 nSamples = 10**4
 
 print(Unbiased_Simulation_Markovian_Case(np.sin, X_0, funcMu, Sigma_0, Beta, nSamples, T, nDim))

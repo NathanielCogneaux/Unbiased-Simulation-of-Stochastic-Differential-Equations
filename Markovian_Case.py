@@ -18,7 +18,7 @@ def RandomTimeGrid(Beta, nSamples, T):
     arrT = np.minimum(np.cumsum(arrTau), T)
 
     # Compute N_T
-    N_T = np.argmax(arrT >= T) - 1
+    N_T = np.argmax(arrT >= T)
 
     return arrT, N_T
 
@@ -37,7 +37,10 @@ def Unbiased_Simulation_Markovian_Case(funcG, arrX0, funcMu, arrSigma, Beta, nSa
     arrX_hat[0] = arrX0
 
     # We now deal with the simulation of the d-dimensional Brownian motion W independent of (τi)i>0 and DeltaW
-    arrW = np.random.normal(size=(nSteps, nDim)) * np.sqrt(arrTimeGrid)
+    arrW = np.zeros((nSteps, nDim))
+    for i in range(nSteps):
+        arrW[i] = np.random.normal(loc=0.0, scale=arrTimeGrid[i], size=nDim)
+
     arrDeltaW = np.diff(arrW, axis=0) #axis = 0 calculates the differences between consecutive rows (time steps) of the array
 
     # Compute (DeltaT_k)k≥0
@@ -53,7 +56,11 @@ def Unbiased_Simulation_Markovian_Case(funcG, arrX0, funcMu, arrSigma, Beta, nSa
     if N_T > 0 :
         # Initialize the products of the W^1_k of the estimator
         prodW1 = 1
-        arrSigma_transpose_inv = np.linalg.inv(arrSigma.transpose())
+
+        if nDim > 1:
+            arrSigma_transpose_inv = np.linalg.inv(arrSigma.transpose())
+        else:
+            arrSigma_transpose_inv = 1/arrSigma
         # W^1_k loop
         for k in range(1, N_T + 1):
             prodW1 *= ((funcMu(arrTimeGrid[k], arrX_hat[k]) - funcMu(arrTimeGrid[k-1], arrX_hat[k-1]))*arrSigma_transpose_inv*arrDeltaW[k + 1])/arrDeltaT[k + 1]

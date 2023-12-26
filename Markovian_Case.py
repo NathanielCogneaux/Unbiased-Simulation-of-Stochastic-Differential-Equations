@@ -12,8 +12,7 @@ import numpy as np
 def RandomTimeGrid(Beta, T):
     # Initialise the random time grid
     arrT = [0]
-    Tau_1 = np.random.exponential(1/Beta)
-    sumTau = Tau_1
+    sumTau = np.random.exponential(1/Beta)
     # get Nt := max{k : Tk < t}
     N_T = 0
     while sumTau < T:

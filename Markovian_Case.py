@@ -38,7 +38,7 @@ def Unbiased_Simulation_Markovian_Case(funcG, arrX0, funcMu, arrSigma, Beta, nSa
 
     # We now deal with the simulation of the d-dimensional Brownian motion W independent of (τi)i>0 and DeltaW
     arrW = np.random.normal(size=(nSteps, nDim)) * np.sqrt(arrTimeGrid)
-    arrDeltaW = np.diff(W, axis=0) #axis = 0 calculates the differences between consecutive rows (time steps) of the array
+    arrDeltaW = np.diff(arrW, axis=0) #axis = 0 calculates the differences between consecutive rows (time steps) of the array
 
     # Compute (DeltaT_k)k≥0
     arrDeltaT = np.diff(arrTimeGrid)
@@ -61,6 +61,6 @@ def Unbiased_Simulation_Markovian_Case(funcG, arrX0, funcMu, arrSigma, Beta, nSa
         Psi_hat = np.exp(Beta*T)*(funcG(arrX_hat[-1]) - funcG(arrX_hat[N_T]))*Beta**(-N_T)*prodW1
 
     else :
-        Psi_hat = np.exp(fBeta*T)*funcG(arrX_hat[-1])
+        Psi_hat = np.exp(Beta*T)*funcG(arrX_hat[-1])
 
     return Psi_hat

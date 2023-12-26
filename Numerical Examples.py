@@ -12,11 +12,10 @@ from Markovian_Case import Unbiased_Simulation_Markovian_Case
 nDim = 1
 X_0 = 0
 Mu_0 = 0.2
-Beta = 0.1  # Beta constant
+Beta = 0.5  # Beta constant
 Sigma_0 = 0.5
 def funcMu (t,x) :
     return np.cos(x)*Mu_0
 T = 100
-nSamples = 10**4
 
-print(Unbiased_Simulation_Markovian_Case(np.sin, X_0, funcMu, Sigma_0, Beta, nSamples, T, nDim))
+print(Unbiased_Simulation_Markovian_Case(np.sin, X_0, funcMu, Sigma_0, Beta, T, nDim))

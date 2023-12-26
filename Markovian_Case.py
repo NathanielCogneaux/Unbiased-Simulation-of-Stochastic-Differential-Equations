@@ -9,40 +9,42 @@ import numpy as np
 
 #We introduce a random discrete time grid with β > 0 a fixed positive constant,
 #(τ_i)i>0 be a sequence of i.i.d. E(β)-exponential random variables.
-def RandomTimeGrid(Beta, nSamples, T):
-    # Generate i.i.d. exponential random variables
-    arrTau = np.random.exponential(scale=1/Beta, size=nSamples)
-
-    # Create the time grid (T_k)k≥0
-    arrT = np.minimum(np.cumsum(arrTau), T)
-
-    # Compute N_T
-    N_T = np.argmax(arrT >= T) - 1
-
+def RandomTimeGrid(Beta, T):
+    # Initialise the random time grid
+    arrT = [0]
+    Tau_1 = np.random.exponential(1/Beta)
+    sumTau = Tau_1
+    # get Nt := max{k : Tk < t}
+    N_T = 0
+    while sumTau < T:
+        arrT.append(sumTau)
+        sumTau += np.random.exponential(1/Beta)
+        N_T += 1
+    arrT.append(T)
     return arrT, N_T
 
 
-def Unbiased_Simulation_Markovian_Case(funcG, arrX0, funcMu, arrSigma, Beta, nSamples, T, nDim):
+def Unbiased_Simulation_Markovian_Case(funcG, arrX0, funcMu, arrSigma, Beta, T, nDim):
     # Get a random discrete time grid
-    arrTimeGrid, N_T = RandomTimeGrid(Beta, nSamples, T)
-    arrTimeGrid = np.concatenate(([0], arrTimeGrid))
+    arrTimeGrid, N_T = RandomTimeGrid(Beta, T)
 
     # Compute (DeltaT_k)k≥0
     arrDeltaT = np.diff(arrTimeGrid)
+    arrDeltaT = arrDeltaT[:N_T+1]
 
     # Initialize array to store X_hat values
-    arrX_hat = np.zeros((N_T + 1, nDim))
+    arrX_hat = np.zeros((N_T + 2, nDim))
 
     # Set initial value (of dimension d)
     arrX_hat[0] = arrX0
 
     # Simulate the Delta of the d-dimensional Brownian motion W
-    arrDeltaW = np.zeros((N_T + 1, nDim))
-    for i in range(1, N_T + 1):
+    arrDeltaW = np.zeros((N_T+1, nDim))
+    for i in range(0, N_T + 1):
         arrDeltaW[i] = np.random.normal(loc=0.0, scale=arrDeltaT[i], size=nDim)
 
     # Euler scheme loop
-    for k in range(N_T + 1):
+    for k in range(N_T+1):
         MuValue_k = funcMu(arrTimeGrid[k], arrX_hat[k])
 
         # Euler scheme formula
@@ -58,8 +60,8 @@ def Unbiased_Simulation_Markovian_Case(funcG, arrX0, funcMu, arrSigma, Beta, nSa
             arrSigma_transpose_inv = 1/arrSigma
 
         # W^1_k loop
-        for k in range(1, N_T + 1):
-            prodW1 *= ((funcMu(arrTimeGrid[k], arrX_hat[k]) - funcMu(arrTimeGrid[k-1], arrX_hat[k-1]))*arrSigma_transpose_inv*arrDeltaW[k])/arrDeltaT[k]
+        for k in range(N_T+1):
+            prodW1 *= ((funcMu(arrTimeGrid[k+1], arrX_hat[k+1]) - funcMu(arrTimeGrid[k], arrX_hat[k]))*arrSigma_transpose_inv*arrDeltaW[k])/arrDeltaT[k]
 
         Psi_hat = np.exp(Beta*T)*(funcG(arrX_hat[-1]) - funcG(arrX_hat[N_T]))*Beta**(-N_T)*prodW1
 

@@ -64,23 +64,3 @@ def Unbiased_Simulation_Markovian_Case(funcG, arrX0, funcMu, arrSigma, Beta, nSa
         Psi_hat = np.exp(fBeta*T)*funcG(arrX_hat[-1])
 
     return Psi_hat
-
-
-
-
-
-# Example usage:
-
-# Parameters
-t_value = 10  # Value of t
-beta_value = 0.5  # Beta constant
-num_samples_value = 1000  # Number of samples
-
-
-
-
-
-
-print("Time Grid Tk:", time_grid)
-print("Nt (max index where Tk < t):", max_index)
-

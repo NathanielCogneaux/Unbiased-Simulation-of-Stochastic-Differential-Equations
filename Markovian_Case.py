@@ -17,48 +17,53 @@ import numpy as np
 #(τ_i)i>0 be a sequence of i.i.d. E(β)-exponential random variables.
 def RandomTimeGrid(nBeta, nSamples, nT):
     # Generate i.i.d. exponential random variables
-    arrTau = np.random.exponential(scale=1/beta, size=num_samples)
+    arrTau = np.random.exponential(scale=1/nBeta, size=nSamples)
 
-    # Create the time grid T_k
-    arrT_k = np.minimum(np.cumsum(tau), nT)
+    # Create the time grid (T_k)k≥0
+    arrT = np.minimum(np.cumsum(tau), nT)
 
     # Compute N_t
-    nN_t = np.argmax(nT_k >= nT)
+    nN_t = np.argmax(arrT >= nT) - 1
 
-    return arrT_k, nN_t
-
-
-
-# We now deal with the simulation of the Brownian motion independent of (τi)i>0
-
-# And the Euler scheme of X on the random discrete grid (Tk)k≥0,
+    return arrT, nN_t
 
 
-def X_EulerScheme(arrX0, nMu, nSigma, arrTimeGrid, nDim):
+def Unbiased_Simulation_Markovian_Case(arrX0, funcMu, arrSigma, nBeta, nSamples, nT, nDim):
+    # Get a random discrete time grid
+    arrTimeGrid, nN_t = RandomTimeGrid(nBeta, nSamples, nT)
+
     # Get the number of steps for the Euler Scheme
     nSteps = len(arrTimeGrid)
 
     # Initialize array to store X_hat values
     arrX_hat = np.zeros((nSteps, nDim))
+
     # Set initial value (of dimension d)
     arrX_hat[0] = arrX0
 
-    # Then generate the d-dimensional Brownian motion W and DeltaW
+    # We now deal with the simulation of the d-dimensional Brownian motion W independent of (τi)i>0 and DeltaW
     arrW = np.random.normal(size=(nSteps, nDim)) * np.sqrt(arrTimeGrid)
-
     arrDeltaW = np.diff(W, axis=0) #axis = 0 calculates the differences between consecutive rows (time steps) of the array
 
-    # Compute DeltaT_k
-    arrDeltaT_k = np.diff(arrTimeGrid)
+    # Compute (DeltaT_k)k≥0
+    arrDeltaT = np.diff(arrTimeGrid)
 
-    for k in range(num_steps - 1):
-        delta_t = np.diff(time_grid)[k]
-        mu_value = mu(time_grid[k], X[k])
+    # Euler scheme loop
+    for k in range(nN_t + 1):
+        fMuValue_k = funcMu(arrTimeGrid[k], arrX_hat[k])
 
         # Euler scheme formula
-        X[k + 1] = X[k] + mu_value * delta_t + sigma * np.sqrt(delta_t) * W[k]
+        arrX_hat[k + 1] = arrX_hat[k] + fMuValue_k * arrDeltaT[k + 1] + arrSigma * arrDeltaW[k + 1]
 
-    return X
+    if nN_t > 0 :
+        # Initialize the products of the W^1_k of the estimator
+        fProdW1 = 1
+        arrSigma_transpose_inv = np.linalg.inv(arrSigma.transpose())
+        # W^1_k loop
+        for k in range(1, nN_t + 1):
+            fProdW1 *= ((funcMu(arrTimeGrid[k], arrX_hat[k]) - funcMu(arrTimeGrid[k-1], arrX_hat[k-1]))*arrSigma_transpose_inv*arrDeltaW[k + 1])/arrDeltaT[k + 1]
+
+    return arrX_hat
 
 # Example usage:
 # Assuming mu, sigma, and time_grid are defined appropriately

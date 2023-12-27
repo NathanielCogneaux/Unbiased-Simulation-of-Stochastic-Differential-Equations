@@ -70,7 +70,7 @@ def Unbiased_Simulation_Markovian_Case(funcG, arrX0, funcMu, arrSigma, Beta, T, 
 
 
 
-def MC_estimator(funcG, arrX0, funcMu, arrSigma, Beta, T, nDim,nSamples)
+def MC_estimator(funcG, arrX0, funcMu, arrSigma, Beta, T, nDim,nSamples):
 
     psi_hats=np.zeros(nSamples)
     for i in range(nSamples):

@@ -1,6 +1,7 @@
 import numpy as np
 
-from Markovian_Case import Unbiased_Simulation_Markovian_Case
+import Markovian_Case
+
 
 # First Example
 # V0 := E[sin(X_T)]
@@ -12,10 +13,14 @@ from Markovian_Case import Unbiased_Simulation_Markovian_Case
 nDim = 1
 X_0 = 0
 Mu_0 = 0.2
-Beta = 0.5  # Beta constant
+Beta = 0.05  # Beta constant
 Sigma_0 = 0.5
 def funcMu (t,x) :
     return np.cos(x)*Mu_0
-T = 100
+T = 0.5
+N = 10**5
 
-print(Unbiased_Simulation_Markovian_Case(np.sin, X_0, funcMu, Sigma_0, Beta, T, nDim))
+
+#print(Markovian_Case.Unbiased_Simulation_Markovian_Case(np.sin, X_0, funcMu, Sigma_0, Beta, T, nDim))
+print(Markovian_Case.MC_estimator(np.sin, X_0, funcMu, Sigma_0, Beta, T, nDim, N))
+

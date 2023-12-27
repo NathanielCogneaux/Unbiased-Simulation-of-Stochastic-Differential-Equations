@@ -17,9 +17,8 @@ def RandomTimeGrid(Beta, T):
     while sumTau < T:
         arrT.append(sumTau)
         sumTau += np.random.exponential(1/Beta)
-        N_T += 1
-    arrT.append(T)
     N_T=len(arrT)-1
+    arrT.append(T)
     return arrT, N_T
 
 

@@ -14,12 +14,12 @@ def RandomTimeGrid(Beta, T):
     arrT = [0]
     sumTau = np.random.exponential(1/Beta)
     # get Nt := max{k : Tk < t}
-    N_T = 0
     while sumTau < T:
         arrT.append(sumTau)
         sumTau += np.random.exponential(1/Beta)
         N_T += 1
     arrT.append(T)
+    N_T=len(arrT)-1
     return arrT, N_T
 
 
@@ -29,8 +29,7 @@ def Unbiased_Simulation_Markovian_Case(funcG, arrX0, funcMu, arrSigma, Beta, T, 
 
     # Compute (DeltaT_k)k≥0
     arrDeltaT = np.diff(arrTimeGrid)
-    arrDeltaT = arrDeltaT[:N_T+1]
-
+    
     # Initialize array to store X_hat values
     arrX_hat = np.zeros((N_T + 2, nDim))
 

@@ -66,3 +66,15 @@ def Unbiased_Simulation_Markovian_Case(funcG, arrX0, funcMu, arrSigma, Beta, T, 
         Psi_hat = np.exp(Beta*T)*funcG(arrX_hat[-1])
 
     return Psi_hat
+
+
+
+
+def MC_estimator(funcG, arrX0, funcMu, arrSigma, Beta, T, nDim,nSamples)
+
+    psi_hats=np.zeros(nSamples)
+    for i in range(nSamples):
+        psi_hats[i] = Unbiased_Simulation_Markovian_Case(funcG, arrX0, funcMu, arrSigma, Beta, T, nDim)
+    p=np.mean(psi_hats) 
+    s=np.std(psi_hats) 
+    return p,[p-1.96*s/np.sqrt(nSamples),p+1.96*s/np.sqrt(nSamples)], s/np.sqrt(nSamples) #est,confidence interval,error

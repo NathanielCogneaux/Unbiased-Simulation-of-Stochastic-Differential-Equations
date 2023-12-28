@@ -27,7 +27,7 @@ def RandomTimeGrid(Beta, T):
     return arrT, N_T
 
 
-'''
+
 def Unbiased_Simulation_Markovian_Case(funcG, arrX0, funcMu, arrSigma, Beta, T, nDim):
     # Get a random discrete time grid
     arrTimeGrid, N_T = RandomTimeGrid(Beta, T)
@@ -72,7 +72,7 @@ def Unbiased_Simulation_Markovian_Case(funcG, arrX0, funcMu, arrSigma, Beta, T, 
         Psi_hat = np.exp(Beta*T)*funcG(arrX_hat[-1])
 
     return Psi_hat
-'''
+
 
 def Unbiased_Simulation_Markovian_Case_1D(funcG, X0, funcMu, Sigma, Beta, T):
     # Get a random discrete time grid
@@ -121,7 +121,8 @@ def MC_estimator(funcG, arrX0, funcMu, arrSigma, Beta, T, nDim, nSamples):
     psi_hats=np.zeros(nSamples)
 
     for i in range(nSamples):
-        psi_hats[i] = Unbiased_Simulation_Markovian_Case_1D(funcG, arrX0, funcMu, arrSigma, Beta, T)
+        #psi_hats[i] = Unbiased_Simulation_Markovian_Case_1D(funcG, arrX0, funcMu, arrSigma, Beta, T)
+        psi_hats[i] = Unbiased_Simulation_Markovian_Case(funcG, arrX0, funcMu, arrSigma, Beta, T, nDim)
 
     p=np.mean(psi_hats)
     s=np.std(psi_hats)

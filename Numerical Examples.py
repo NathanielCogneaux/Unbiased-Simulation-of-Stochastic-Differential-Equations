@@ -6,7 +6,7 @@ import Euler_Scheme
 # First Example
 # V0 := E[(ST − K)+]
 
-'''
+
 # Parameters:
 nDim = 1
 X_0 = 0
@@ -20,19 +20,19 @@ EulerScheme_mSteps = 10
 
 def funcMu (t,x):
     return 0.1 * (np.sqrt(np.minimum(M, np.exp(x))) - 1.0) - 0.125
-def funcSigma (t,x) :
+def funcSigma (t,x):
     return Sigma_0
-def funcG (x) :
+def funcG (x):
     return np.maximum(0, np.exp(x) - K)
 
 
 #print(Markovian_Case.Unbiased_Simulation_Markovian_Case(funcG, X_0, funcMu, Sigma_0, Beta, T, nDim))
 print(Markovian_Case.MC_estimator(funcG, X_0, funcMu, Sigma_0, Beta, T, nDim, N))
-#print(Euler_Scheme.MC_EulerScheme(funcG, X_0, funcMu, funcSigma, T, nDim, EulerScheme_mSteps, N))
+print(Euler_Scheme.MC_EulerScheme(funcG, X_0, funcMu, funcSigma, T, nDim, EulerScheme_mSteps, N))
+
+
+
 '''
-
-
-
 # TEST 1D ALONE
 
 # Parameters:
@@ -57,3 +57,4 @@ def funcG (x) :
 #print(Markovian_Case.Unbiased_Simulation_Markovian_Case(funcG, X_0, funcMu, Sigma_0, Beta, T, nDim))
 print(Markovian_Case.MC_estimator(funcG, X_0, funcMu, Sigma_0, Beta, T, nDim, N))
 #print(Euler_Scheme.MC_EulerScheme(funcG, X_0, funcMu, funcSigma, T, nDim, EulerScheme_mSteps, N))
+'''

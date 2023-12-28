@@ -18,7 +18,7 @@ def Euler_Scheme_Gen(arrX0, funcMu, funcSigma,T, nDim,mSteps):
 
     for i in range(mSteps):
         dW = np.sqrt(dt)*np.random.randn(nDim)
-        X[i+1]=X[i]+funcMu(time_grid[i],X[i])*dt+funcSigma(time_grid[i],X[i])@dW
+        X[i+1]=X[i]+funcMu(time_grid[i],X[i])*dt+funcSigma(time_grid[i],X[i])*dW
     return X
 
 def MC_EulerScheme(funcG,arrX0, funcMu, funcSigma,T, nDim,mSteps,nSamples):

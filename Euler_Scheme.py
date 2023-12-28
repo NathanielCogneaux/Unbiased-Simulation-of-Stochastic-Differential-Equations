@@ -6,11 +6,10 @@ is for the case non-path dependant, for the case path dependant,
 just remove [-1] from this line : 
 
 g_hats[i] = funcG(  Euler_Scheme_Gen(arrX0, funcMu, funcSigma,T, nDim,mSteps)[-1] 
-
 """
 
 
-def Euler_Scheme_Gen(arrX0, funcMu, funcSigma,T, nDim,mSteps):
+def Euler_Scheme_Gen(arrX0, funcMu, funcSigma, T, nDim, mSteps):
     dt=T/mSteps #time step size
     X=np.zeros((mSteps+1,nDim))
     X[0]=arrX0 #inialize at X0
@@ -18,14 +17,14 @@ def Euler_Scheme_Gen(arrX0, funcMu, funcSigma,T, nDim,mSteps):
 
     for i in range(mSteps):
         dW = np.sqrt(dt)*np.random.randn(nDim)
-        X[i+1]=X[i]+funcMu(time_grid[i],X[i])*dt+funcSigma(time_grid[i],X[i])*dW
+        X[i+1] = X[i] + funcMu(time_grid[i], X[i])*dt + funcSigma(time_grid[i], X[i]) @ dW
     return X
 
-def MC_EulerScheme(funcG,arrX0, funcMu, funcSigma,T, nDim,mSteps,nSamples):
+def MC_EulerScheme(funcG, arrX0, funcMu, funcSigma, T, nDim, mSteps, nSamples):
     g_hats = np.zeros(nSamples)
 
     for i in range(nSamples):
-        g_hats[i] = funcG(  Euler_Scheme_Gen(arrX0, funcMu, funcSigma,T, nDim,mSteps)[-1] )
+        g_hats[i] = funcG(Euler_Scheme_Gen(arrX0, funcMu, funcSigma,T, nDim,mSteps)[-1])
 
     p = np.mean(g_hats)
     s = np.std(g_hats)
@@ -33,6 +32,7 @@ def MC_EulerScheme(funcG,arrX0, funcMu, funcSigma,T, nDim,mSteps,nSamples):
     return p, [p - 1.96 * s / np.sqrt(nSamples), p + 1.96 * s / np.sqrt(nSamples)], s / np.sqrt(nSamples)  # test,confidence interval,error
 
 
+'''
 #Testing Example 3 from Numerical example (driftless SDE)
 def funcMu(t, x):
     return 0  # Driftless
@@ -58,4 +58,4 @@ estimator, confidence_interval, error = MC_EulerScheme(funcG, arrX0, funcMu, fun
 print("Estimator:", estimator)
 print("95% Confidence Interval:", confidence_interval)
 print("Standard Error:", error)
-
+'''

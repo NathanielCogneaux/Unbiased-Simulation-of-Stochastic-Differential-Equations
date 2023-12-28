@@ -45,7 +45,7 @@ def Unbiased_Simulation_Markovian_Case(funcG, arrX0, funcMu, arrSigma, Beta, T, 
         MuValue_k = funcMu(arrTimeGrid[k], arrX_hat[k])
 
         # Euler scheme formula
-        arrX_hat[k + 1] = arrX_hat[k] + MuValue_k * arrDeltaT[k] + arrSigma * arrDeltaW[k]
+        arrX_hat[k + 1] = arrX_hat[k] + MuValue_k * arrDeltaT[k] + arrSigma @ arrDeltaW[k]
 
     if N_T > 0 :
         # Initialize the products of the W^1_k of the estimator

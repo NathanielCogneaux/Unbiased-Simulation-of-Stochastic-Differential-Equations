@@ -28,10 +28,11 @@ def EulerScheme_Numex3(m, N, sigma, K, x, T):
 
     return mean_payoff,std_payoff / np.sqrt(N)
 
+'''
 # Test the function
 m, N, sigma, K, x, T = 10, 10**6, 0.2, 1, 1, 1
 statistical_error = EulerScheme_Numex3(m, N, sigma, K, x, T)
 print("Statistical error:", statistical_error)
-
+'''
 
 

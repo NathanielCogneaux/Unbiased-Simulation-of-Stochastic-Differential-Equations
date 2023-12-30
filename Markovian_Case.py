@@ -60,8 +60,8 @@ def Unbiased_Simulation_Markovian_Case(funcG, arrX0, funcMu, arrSigma, Beta, T, 
             arrSigma_transpose_inv = 1/arrSigma
 
         # W^1_k loop
-        for k in range(N_T+1):
-            prodW1 *= ((funcMu(arrTimeGrid[k+1], arrX_hat[k+1]) - funcMu(arrTimeGrid[k], arrX_hat[k]))*arrSigma_transpose_inv*arrDeltaW[k])/arrDeltaT[k]
+        for k in range(1, N_T):
+            prodW1 *= ((funcMu(arrTimeGrid[k], arrX_hat[k]) - funcMu(arrTimeGrid[k-1], arrX_hat[k-1]))*arrSigma_transpose_inv*arrDeltaW[k])/arrDeltaT[k]
 
         Psi_hat = np.exp(Beta*T)*(funcG(arrX_hat[-1]) - funcG(arrX_hat[N_T]))*Beta**(-N_T)*prodW1
 
@@ -118,8 +118,8 @@ def MC_estimator(funcG, arrX0, funcMu, arrSigma, Beta, T, nDim, nSamples):
     psi_hats=np.zeros(nSamples)
 
     for i in range(nSamples):
-        #psi_hats[i] = Unbiased_Simulation_Markovian_Case_1D(funcG, arrX0, funcMu, arrSigma, Beta, T)
-        psi_hats[i] = Unbiased_Simulation_Markovian_Case(funcG, arrX0, funcMu, arrSigma, Beta, T, nDim)
+        psi_hats[i] = Unbiased_Simulation_Markovian_Case_1D(funcG, arrX0, funcMu, arrSigma, Beta, T)
+        #psi_hats[i] = Unbiased_Simulation_Markovian_Case(funcG, arrX0, funcMu, arrSigma, Beta, T, nDim)
 
     p=np.mean(psi_hats)
     s=np.std(psi_hats)

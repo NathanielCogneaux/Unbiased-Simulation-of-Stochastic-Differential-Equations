@@ -1,9 +1,6 @@
 # The unbiased simulation algorithm
-#
 # The Markovian case
-# Assumption : - Constant and nondegenerate diffusion coefficient
-#              - the drift function μ(t,x) is bounded and continuous in (t,x), uniformly 1/2
-#              Hölder in t and uniformly Lipschitz in x, for some constant L > 0
+
 
 import numpy as np
 
@@ -104,8 +101,8 @@ def Unbiased_Simulation_Markovian_Case_1D(funcG, X0, funcMu, Sigma, Beta, T):
         prodW1 = 1
         Sigma_transpose_inv = 1/Sigma
         # W^1_k loop
-        for k in range(N_T+1):
-            prodW1 *= ((funcMu(arrTimeGrid[k+1],X_hat[k+1]) - funcMu(arrTimeGrid[k], X_hat[k]))*Sigma_transpose_inv*arrDeltaW[k])/arrDeltaT[k]
+        for k in range(1, N_T+1):
+            prodW1 *= ((funcMu(arrTimeGrid[k], X_hat[k]) - funcMu(arrTimeGrid[k-1], X_hat[k-1]))*Sigma_transpose_inv*arrDeltaW[k])/arrDeltaT[k]
 
         Psi_hat = np.exp(Beta*T)*(funcG(X_hat[-1]) - funcG(X_hat[N_T]))*Beta**(-N_T)*prodW1
 

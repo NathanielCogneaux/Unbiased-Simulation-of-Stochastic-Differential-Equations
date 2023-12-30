@@ -1,33 +1,134 @@
 # The unbiased simulation algorithm
 # The path dependent case
 
-
-
-
-
-
 import numpy as np
 
+#We introduce a random discrete time grid with β > 0 a fixed positive constant,
+#(τ_i)i>0 be a sequence of i.i.d. E(β)-exponential random variables.
+
+#np.random.seed(123)
+
+def RandomTimeGrid_Interval(Beta, t1, t2):
+    # Initialise the random time grid
+    arr_t1t2 = [t1]
+    sumTau = t1 + np.random.exponential(1/Beta)
+    while sumTau < t2:
+        arr_t1t2.append(sumTau)
+        sumTau += np.random.exponential(1/Beta)
+
+    N_t1t2 = len(arrT)-1
+    arr_t1t2.append(t2)
+
+    return arr_t1t2, N_t1t2
+
+def BrownianMotionSimulation_Interval(Beta, t1, t2):
+    # Get a random discrete time grid for the interval
+    arr_t1t2, N_t1t2 = RandomTimeGrid_Interval(Beta, t1, t2)
+
+    # Compute (DeltaT_k)k≥0
+    arrDelta_t1t2 = np.diff(arr_t1t2)
+
+    # Simulate the Delta of the Brownian motion W
+    arrDeltaW_t1t2 = np.zeros(N_t1t2 + 1)
+    for i in range(N_t1t2 + 1):
+        arrDeltaW_t1t2[i] = np.random.normal(loc=0.0, scale=arrDelta_t1t2[i])
+
+    return N_t1t2, arrDelta_t1t2, arrDeltaW_t1t2
 
 
-# Simulation of d-dimensional Brownian motion
-def simulate_brownian_motion(T, N, d):
-    if N == 0:
-        return np.zeros((1, d))
-    dt = T/N  # time increment
-    increments = np.sqrt(dt) * np.random.randn(N, d)
-    return np.cumsum(increments, axis=0)
+def Unbiased_Simulation_Path_Dependent_Case_1D(funcG, arrX0, funcMu, arrSigma, Beta, T, nDim, lTimeIntervals):
 
-# Main algorithm for the path-dependent case
-def Path_Dependent_Case(g, mu, sigma, beta, T, d, x0, n):
-    # ... (rest of the code as before)
+    for index_ti in range(len(lTimeIntervals)):
+        N_t1t2, arrDelta_t1t2, arrDeltaW_t1t2 = BrownianMotionSimulation_Interval(Beta, lTimeIntervals[index_ti], lTimeIntervals[index_ti+1])
 
-# Parameters
-beta = 1.0  # intensity of the Poisson process
-T = 1.0     # end time
-d = 1       # dimension of Brownian motion
-x0 = np.array([0.0])  # initial condition
-n = 10      # number of intervals
+    # Initialize array to store X_hat values
+    arrX_hat = np.zeros((N_T + 2, nDim))
 
-# Calculate the estimator
-Psi_hat = path_dependent_algorithm(g, mu &#8203;``【oaicite:0】``&#8203;
+    # Set initial value (of dimension d)
+    arrX_hat[0] = arrX0
+
+    ############################################
+
+
+
+    # Euler scheme loop
+    for k in range(N_T+1):
+        MuValue_k = funcMu(arrTimeGrid[k], arrX_hat[k])
+
+        # Euler scheme formula
+        arrX_hat[k + 1] = arrX_hat[k] + arrDeltaT[k] * MuValue_k + arrSigma @ arrDeltaW[k]
+
+    if N_T > 0 :
+        # Initialize the products of the W^1_k of the estimator
+        prodW1 = 1
+
+        if nDim > 1:
+            arrSigma_transpose_inv = np.linalg.inv(arrSigma.transpose())
+        else:
+            arrSigma_transpose_inv = 1/arrSigma
+
+        # W^1_k loop
+        for k in range(1, N_T):
+            prodW1 *= ((funcMu(arrTimeGrid[k], arrX_hat[k]) - funcMu(arrTimeGrid[k-1], arrX_hat[k-1]))*arrSigma_transpose_inv*arrDeltaW[k])/arrDeltaT[k]
+
+        Psi_hat = np.exp(Beta*T)*(funcG(arrX_hat[-1]) - funcG(arrX_hat[N_T]))*Beta**(-N_T)*prodW1
+
+    else :
+        Psi_hat = np.exp(Beta*T)*funcG(arrX_hat[-1])
+
+    return Psi_hat
+
+
+def Unbiased_Simulation_Markovian_Case_1D(funcG, X0, funcMu, Sigma, Beta, T):
+    # Get a random discrete time grid
+    arrTimeGrid, N_T = RandomTimeGrid(Beta, T)
+
+    # Compute (DeltaT_k)k≥0
+    arrDeltaT = np.diff(arrTimeGrid)
+
+    # Initialize array to store X_hat values
+    X_hat = np.zeros(N_T + 2)
+
+    # Set initial value
+    X_hat[0] = X0
+
+    # Simulate the Delta of the d-dimensional Brownian motion W
+    arrDeltaW = np.zeros(N_T+1)
+    for i in range(N_T + 1):
+        arrDeltaW[i] = np.random.normal(loc=0.0, scale=arrDeltaT[i])
+
+    # Euler scheme loop
+    for k in range(N_T+1):
+        # Euler scheme formula
+        X_hat[k + 1] = X_hat[k] + arrDeltaT[k] * funcMu(arrTimeGrid[k], X_hat[k]) + Sigma * arrDeltaW[k]
+
+    if N_T > 0:
+        # Initialize the products of the W^1_k of the estimator
+        prodW1 = 1
+        Sigma_transpose_inv = 1/Sigma
+        # W^1_k loop
+        for k in range(1, N_T+1):
+            prodW1 *= ((funcMu(arrTimeGrid[k], X_hat[k]) - funcMu(arrTimeGrid[k-1], X_hat[k-1]))*Sigma_transpose_inv*arrDeltaW[k])/arrDeltaT[k]
+
+        Psi_hat = np.exp(Beta*T)*(funcG(X_hat[-1]) - funcG(X_hat[N_T]))*Beta**(-1*N_T)*prodW1
+
+    else :
+        Psi_hat = np.exp(Beta*T)*funcG(X_hat[-1])
+
+    return Psi_hat
+
+
+
+def MC_estimator(funcG, arrX0, funcMu, arrSigma, Beta, T, nDim, nSamples):
+
+    psi_hats=np.zeros(nSamples)
+
+    for i in range(nSamples):
+        psi_hats[i] = Unbiased_Simulation_Markovian_Case_1D(funcG, arrX0, funcMu, arrSigma, Beta, T)
+        #psi_hats[i] = Unbiased_Simulation_Markovian_Case(funcG, arrX0, funcMu, arrSigma, Beta, T, nDim)
+
+    p=np.mean(psi_hats)
+    s=np.std(psi_hats)
+
+    return p,[p-1.96*s/np.sqrt(nSamples),p+1.96*s/np.sqrt(nSamples)], s/np.sqrt(nSamples) #test,confidence interval,error
+

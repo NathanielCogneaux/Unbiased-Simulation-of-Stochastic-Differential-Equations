@@ -3,9 +3,6 @@
 
 import numpy as np
 
-#We introduce a random discrete time grid with β > 0 a fixed positive constant,
-#(τ_i)i>0 be a sequence of i.i.d. E(β)-exponential random variables.
-
 #np.random.seed(123)
 
 def RandomTimeGrid_Interval(Beta, t1, t2):
@@ -16,7 +13,7 @@ def RandomTimeGrid_Interval(Beta, t1, t2):
         arr_t1t2.append(sumTau)
         sumTau += np.random.exponential(1/Beta)
 
-    N_t1t2 = len(arrT)-1
+    N_t1t2 = len(arr_t1t2)-1
     arr_t1t2.append(t2)
 
     return arr_t1t2, N_t1t2
@@ -33,30 +30,45 @@ def BrownianMotionSimulation_Interval(Beta, t1, t2):
     for i in range(N_t1t2 + 1):
         arrDeltaW_t1t2[i] = np.random.normal(loc=0.0, scale=arrDelta_t1t2[i])
 
-    return N_t1t2, arrDelta_t1t2, arrDeltaW_t1t2
+    return N_t1t2, arr_t1t2, arrDelta_t1t2, arrDeltaW_t1t2
+
+def funcMu_k(k, lInitialConditions, t, x, numIter):
+    lX = lInitialConditions.copy()
+    for i in range(k, numIter):
+        lX.append(x)
+    return funcMu(t, lX)
+
+# exempel de funcMu possible
+def funcMu(t, lX):
+    return(np.sum(lX)/len(lX))
 
 
-def Unbiased_Simulation_Path_Dependent_Case_1D(funcG, arrX0, funcMu, arrSigma, Beta, T, nDim, lTimeIntervals):
+def Unbiased_Simulation_Path_Dependent_Case_1D(funcG, X0, funcMu, Sigma, Beta, lTimeIntervals):
+    # a noter la modif sur funcMU
+    # donc on doit garder les dernieres valeurs comme valeurs initiales pour funcMU !
+    numIter = len(lTimeIntervals)
+    lInitialConditions = [X0]
 
-    for index_ti in range(len(lTimeIntervals)):
-        N_t1t2, arrDelta_t1t2, arrDeltaW_t1t2 = BrownianMotionSimulation_Interval(Beta, lTimeIntervals[index_ti], lTimeIntervals[index_ti+1])
+    for index_ti in range(numIter):
+        N_t1t2, arr_t1t2, arrDelta_t1t2, arrDeltaW_t1t2 = BrownianMotionSimulation_Interval(Beta, lTimeIntervals[index_ti], lTimeIntervals[index_ti+1])
 
-    # Initialize array to store X_hat values
-    arrX_hat = np.zeros((N_T + 2, nDim))
+        # Initialize array to store X_tilde values
+        arrX_tilde = np.zeros(N_t1t2 + 2)
 
-    # Set initial value (of dimension d)
-    arrX_hat[0] = arrX0
+        # Set initial value
+        arrX_tilde[0] = X0
+
+        # local Euler scheme loop on [tk, tk+1]
+        for k in range(N_t1t2+1):
+            # Euler scheme formula
+            arrX_tilde[k+1] = arrX_tilde[k] + arrDelta_t1t2[k] * funcMu_k(arr_t1t2[k], arrX_hat[k]) + Sigma * arrDeltaW_t1t2[k]
+
 
     ############################################
 
 
 
-    # Euler scheme loop
-    for k in range(N_T+1):
-        MuValue_k = funcMu(arrTimeGrid[k], arrX_hat[k])
 
-        # Euler scheme formula
-        arrX_hat[k + 1] = arrX_hat[k] + arrDeltaT[k] * MuValue_k + arrSigma @ arrDeltaW[k]
 
     if N_T > 0 :
         # Initialize the products of the W^1_k of the estimator

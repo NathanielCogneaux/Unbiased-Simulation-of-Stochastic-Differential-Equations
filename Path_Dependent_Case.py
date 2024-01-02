@@ -32,6 +32,7 @@ def BrownianMotionSimulation_Interval(Beta, t1, t2):
 
     return N_t1t2, arr_t1t2, arrDelta_t1t2, arrDeltaW_t1t2
 
+
 def funcMu_k(k, lInitialConditions, t, x, numIter):
     lX = lInitialConditions.copy()
     for i in range(k, numIter):

@@ -32,17 +32,15 @@ def BrownianMotionSimulation_Interval(Beta, t1, t2):
 
     return N_t1t2, arr_t1t2, arrDelta_t1t2, arrDeltaW_t1t2
 
-def funcMu_k(k, lX_ti, t, x, numIter):
-    lX = lX_ti[:k] ########### PAS SUR QUE CE SOIT NECESSAIRE
+def funcMu_k(k, Xk, t, Xj_tilde, numIter):
+    X = Xk.copy()
     for i in range(k, numIter):
-        lX.append(x)
-    return funcMu(t, lX)
+        X.append(Xj_tilde)
+    return funcMu(t, X)
 
 # exemple de funcMu possible
 def funcMu(t, lX):
     return(np.sum(lX)/len(lX))
-
-
 
 
 ############ RECURSIVE IMPLEMENTATION ###########
@@ -51,16 +49,18 @@ def funcMu(t, lX):
 def Psi_US_1D_Recursive(k, Xk, X0, funcG, funcMu, Sigma, Beta, lTimeIntervals):
 
     # Sanity checks & Final condition of the recursive function
-    if k == len(lTimeIntervals):
-        return funcG(Xk) # to be checked
+    if k ==0:
+        return "INPUT ERROR : k must start at 1"
     elif k == 1:
         Xk = [X0]
         Sigma_transpose_inv = 1/Sigma # avoid to compute it everytime
-    elif k ==0:
-        return "INPUT ERROR : k must start at 1"
+        numIter = len(lTimeIntervals)
+
+    elif k == numIter:
+        return funcG(Xk) # to be checked
 
     tk_minus1, tk = lTimeIntervals[k-1], lTimeIntervals[k]
-    Nk_tilde, arr_tkminus1_tk, Delta_tkminus1_tk, DeltaW_tkminus1_tk = BrownianMotionSimulation_Interval(Beta, tk_minus1, tk)
+    Nk_tilde, arr_tkminus1_tk, DeltaT_tkminus1_tk, DeltaW_tkminus1_tk = BrownianMotionSimulation_Interval(Beta, tk_minus1, tk)
 
     # Initialize array to store X_tilde values
     Xk_tilde = np.zeros(Nk_tilde + 2)
@@ -71,16 +71,14 @@ def Psi_US_1D_Recursive(k, Xk, X0, funcG, funcMu, Sigma, Beta, lTimeIntervals):
     # local Euler scheme loop on [tk-1, tk]
     for j in range(Nk_tilde+1):
         # Euler scheme formula
-        Xk_tilde[j+1] = Xk_tilde[j] + Delta_tkminus1_tk[j] * funcMu_k(k, lX_ti, arr_t1t2[j], Xk_tilde[j], numIter) + Sigma * DeltaW_tkminus1_tk[j]
-        ############# FUNC MU K NEEDS TO BE TAKEN CARE OF
+        Xk_tilde[j+1] = Xk_tilde[j] + DeltaT_tkminus1_tk[j] * funcMu_k(k, Xk, arr_tkminus1_tk[j], Xj_tilde[j], numIter) + Sigma * DeltaW_tkminus1_tk[j]
 
     if Nk_tilde>0:
         # Initialize the products of the W^1_k of the estimator
         prodWk_tilde = 1
         # W^k_j loop
         for j in range(1, Nk_tilde + 1):
-            prodWk_tilde *= ((funcMu_k(k, lX_ti, arr_t1t2[j], arrX_tilde[j], numIter) - funcMu_k(k, lX_ti, arr_t1t2[j-1], arrX_tilde[j-1], numIter)) * Sigma_transpose_inv*arrDeltaW[j])/arrDeltaT[j]
-        ############# FUNC MU K NEEDS TO BE TAKEN CARE OF
+            prodWk_tilde *= (funcMu_k(k, Xk, arr_tkminus1_tk[j], Xj_tilde[j], numIter) - funcMu_k(k, Xk, arr_tkminus1_tk[j-1], Xj_tilde[j-1], numIter)) * Sigma_transpose_inv*DeltaW_tkminus1_tk[j]/DeltaT_tkminus1_tk[j]
 
         Xk_0 = Xk.copy().append(Xk_tilde[-2])
         Xk.append(Xk_tilde[-1])

@@ -51,11 +51,8 @@ def Psi_US_1D_Recursive(k, Xk, X0, funcG, funcMu, Sigma, Beta, lTimeIntervals):
     # Sanity checks & Final condition of the recursive function
     if k ==0:
         return "INPUT ERROR : k must start at 1"
-    elif k == 1:
-        Sigma_transpose_inv = 1/Sigma # avoid to compute it everytime
-        numIter = len(lTimeIntervals)
 
-    elif k == numIter:
+    elif k == len(lTimeIntervals):
         return funcG(Xk) # to be checked
 
     tk_minus1, tk = lTimeIntervals[k-1], lTimeIntervals[k]
@@ -70,21 +67,23 @@ def Psi_US_1D_Recursive(k, Xk, X0, funcG, funcMu, Sigma, Beta, lTimeIntervals):
     # local Euler scheme loop on [tk-1, tk]
     for j in range(Nk_tilde+1):
         # Euler scheme formula
-        Xk_tilde[j+1] = Xk_tilde[j] + DeltaT_tkminus1_tk[j] * funcMu_k(k, Xk, arr_tkminus1_tk[j], Xj_tilde[j], numIter, funcMu) + Sigma * DeltaW_tkminus1_tk[j]
+        Xk_tilde[j+1] = Xk_tilde[j] + DeltaT_tkminus1_tk[j] * funcMu_k(k, Xk, arr_tkminus1_tk[j], Xk_tilde[j], len(lTimeIntervals), funcMu) + Sigma * DeltaW_tkminus1_tk[j]
 
     if Nk_tilde>0:
         # Initialize the products of the W^1_k of the estimator
         prodWk_tilde = 1
         # W^k_j loop
         for j in range(1, Nk_tilde + 1):
-            prodWk_tilde *= (funcMu_k(k, Xk, arr_tkminus1_tk[j], Xj_tilde[j], numIter, funcMu) - funcMu_k(k, Xk, arr_tkminus1_tk[j-1], Xj_tilde[j-1], numIter, funcMu)) * Sigma_transpose_inv*DeltaW_tkminus1_tk[j]/DeltaT_tkminus1_tk[j]
+            prodWk_tilde *= (funcMu_k(k, Xk, arr_tkminus1_tk[j], Xk_tilde[j], len(lTimeIntervals), funcMu) - funcMu_k(k, Xk, arr_tkminus1_tk[j-1], Xk_tilde[j-1], len(lTimeIntervals), funcMu)) * DeltaW_tkminus1_tk[j]/ (DeltaT_tkminus1_tk[j] * Sigma)
 
-        Xk_0 = Xk.copy().append(Xk_tilde[-2])
+        Xk_0 = Xk.copy()
+        Xk_0.append(Xk_tilde[-2])
         Xk.append(Xk_tilde[-1])
 
         return np.exp(Beta*(tk-tk_minus1))*(Psi_US_1D_Recursive(k+1, Xk, X0, funcG, funcMu, Sigma, Beta, lTimeIntervals) - Psi_US_1D_Recursive(k+1, Xk_0, X0, funcG, funcMu, Sigma, Beta, lTimeIntervals))*Beta**(-Nk_tilde)*prodWk_tilde
 
-    return np.exp(Beta*(tk-tk_minus1))*Psi_US_1D_Recursive(k+1, Xk.append(Xk_tilde[-1]), X0, funcG, funcMu, Sigma, Beta, lTimeIntervals)
+    Xk.append(Xk_tilde[-1])
+    return np.exp(Beta*(tk-tk_minus1))*Psi_US_1D_Recursive(k+1, Xk, X0, funcG, funcMu, Sigma, Beta, lTimeIntervals)
 
 ############ RECURSIVE IMPLEMENTATION ###########
 
@@ -134,7 +133,7 @@ def Unbiased_Simulation_Path_Dependent_Case_1D(funcG, X0, funcMu, Sigma, Beta, l
 ############ NON RECURSIVE IMPLEMENTATION ###########
 '''
 
-def MC_estimator(funcG, X0, funcMu, Sigma, Beta, T, nSamples):
+def MC_estimator(funcG, X0, funcMu, Sigma, Beta, lTimeIntervals, nSamples):
 
     psi_hats=np.zeros(nSamples)
 

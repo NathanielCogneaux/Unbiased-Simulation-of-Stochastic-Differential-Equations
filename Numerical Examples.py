@@ -71,11 +71,11 @@ M = 4
 K = 1 # strike
 
 N = 10**5
-
-def funcMu (t,X):
-    return 0.1 * (np.sqrt(np.min([M, np.exp(x)])) - 1) - 0.125
+T = 1
+lTimeIntervals = [i*T/10 for i in range(1, 11)]
+def funcMu (t,X): ######### needs to be modified
+    return 0.1 * (np.sqrt(np.min([M, np.exp(X[-1])])) - 1) - 0.125
 def funcG (lX):
     return np.max([0, np.sum(np.exp(lX))/len(lX) - K])
 
-
-print(Path_Dependent_Case.MC_estimator(funcG, X0, funcMu, Sigma, Beta, T, nSamples))
+print(Path_Dependent_Case.MC_estimator(funcG, X0, funcMu, Sigma, Beta, lTimeIntervals, N))

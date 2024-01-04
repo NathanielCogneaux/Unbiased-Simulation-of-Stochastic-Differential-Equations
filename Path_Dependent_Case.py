@@ -128,7 +128,6 @@ def Unbiased_Simulation_Path_Dependent_Case_1D(funcG, X0, funcMu, Sigma, Beta, l
         else:
             Psi_tilde_1 = np.exp(Beta*(lTimeIntervals[k+1] - lTimeIntervals[k]))*funcG(arrX_hat[-1])
 
-
     return Psi_hat
 ############ NON RECURSIVE IMPLEMENTATION ###########
 '''

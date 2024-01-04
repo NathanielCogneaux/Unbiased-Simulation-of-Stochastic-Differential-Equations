@@ -2,10 +2,11 @@ import numpy as np
 
 import Markovian_Case
 import Euler_Scheme
+import Path_Dependent_Case
 
+'''
 # First Example
 # V0 := E[(ST − K)+]
-
 
 # Parameters:
 nDim = 1
@@ -29,7 +30,7 @@ def funcG (x):
 #print(Markovian_Case.Unbiased_Simulation_Markovian_Case(funcG, X_0, funcMu, Sigma_0, Beta, T, nDim))
 print(Markovian_Case.MC_estimator(funcG, X_0, funcMu, Sigma_0, Beta, T, nDim, N))
 print(Euler_Scheme.MC_EulerScheme(funcG, X_0, funcMu, funcSigma, T, nDim, EulerScheme_mSteps, N))
-
+'''
 
 
 '''
@@ -58,3 +59,23 @@ def funcG (x) :
 print(Markovian_Case.MC_estimator(funcG, X_0, funcMu, Sigma_0, Beta, T, nDim, N))
 #print(Euler_Scheme.MC_EulerScheme(funcG, X_0, funcMu, funcSigma, T, nDim, EulerScheme_mSteps, N))
 '''
+
+
+######### TEST PATH DEPENDENT CASE ###########
+
+# Parameters:
+X0 = 0
+Beta = 0.05 # Beta constant
+Sigma = 0.5
+M = 4
+K = 1 # strike
+
+N = 10**5
+
+def funcMu (t,X):
+    return 0.1 * (np.sqrt(np.min([M, np.exp(x)])) - 1) - 0.125
+def funcG (lX):
+    return np.max([0, np.sum(np.exp(lX))/len(lX) - K])
+
+
+print(Path_Dependent_Case.MC_estimator(funcG, X0, funcMu, Sigma, Beta, T, nSamples))

@@ -32,7 +32,7 @@ def BrownianMotionSimulation_Interval(Beta, t1, t2):
 
     return N_t1t2, arr_t1t2, arrDelta_t1t2, arrDeltaW_t1t2
 
-def funcMu_k(k, Xk, t, Xj_tilde, numIter):
+def funcMu_k(k, Xk, t, Xj_tilde, numIter, funcMu):
     X = Xk.copy()
     for i in range(k, numIter):
         X.append(Xj_tilde)
@@ -52,7 +52,6 @@ def Psi_US_1D_Recursive(k, Xk, X0, funcG, funcMu, Sigma, Beta, lTimeIntervals):
     if k ==0:
         return "INPUT ERROR : k must start at 1"
     elif k == 1:
-        Xk = [X0]
         Sigma_transpose_inv = 1/Sigma # avoid to compute it everytime
         numIter = len(lTimeIntervals)
 
@@ -71,14 +70,14 @@ def Psi_US_1D_Recursive(k, Xk, X0, funcG, funcMu, Sigma, Beta, lTimeIntervals):
     # local Euler scheme loop on [tk-1, tk]
     for j in range(Nk_tilde+1):
         # Euler scheme formula
-        Xk_tilde[j+1] = Xk_tilde[j] + DeltaT_tkminus1_tk[j] * funcMu_k(k, Xk, arr_tkminus1_tk[j], Xj_tilde[j], numIter) + Sigma * DeltaW_tkminus1_tk[j]
+        Xk_tilde[j+1] = Xk_tilde[j] + DeltaT_tkminus1_tk[j] * funcMu_k(k, Xk, arr_tkminus1_tk[j], Xj_tilde[j], numIter, funcMu) + Sigma * DeltaW_tkminus1_tk[j]
 
     if Nk_tilde>0:
         # Initialize the products of the W^1_k of the estimator
         prodWk_tilde = 1
         # W^k_j loop
         for j in range(1, Nk_tilde + 1):
-            prodWk_tilde *= (funcMu_k(k, Xk, arr_tkminus1_tk[j], Xj_tilde[j], numIter) - funcMu_k(k, Xk, arr_tkminus1_tk[j-1], Xj_tilde[j-1], numIter)) * Sigma_transpose_inv*DeltaW_tkminus1_tk[j]/DeltaT_tkminus1_tk[j]
+            prodWk_tilde *= (funcMu_k(k, Xk, arr_tkminus1_tk[j], Xj_tilde[j], numIter, funcMu) - funcMu_k(k, Xk, arr_tkminus1_tk[j-1], Xj_tilde[j-1], numIter, funcMu)) * Sigma_transpose_inv*DeltaW_tkminus1_tk[j]/DeltaT_tkminus1_tk[j]
 
         Xk_0 = Xk.copy().append(Xk_tilde[-2])
         Xk.append(Xk_tilde[-1])
@@ -135,13 +134,13 @@ def Unbiased_Simulation_Path_Dependent_Case_1D(funcG, X0, funcMu, Sigma, Beta, l
 ############ NON RECURSIVE IMPLEMENTATION ###########
 '''
 
-def MC_estimator(funcG, arrX0, funcMu, arrSigma, Beta, T, nDim, nSamples):
+def MC_estimator(funcG, X0, funcMu, Sigma, Beta, T, nSamples):
 
     psi_hats=np.zeros(nSamples)
 
     for i in range(nSamples):
         #psi_hats[i] = Unbiased_Simulation_Path_Dependent_Case_1D((funcG, X0, funcMu, Sigma, Beta, lTimeIntervals))
-        psi_hats[i] = Unbiased_Simulation_Path_Dependent_Case_1D_Recursive(0, funcG, X0, funcMu, Sigma, Beta, lTimeIntervals)
+        psi_hats[i] = Psi_US_1D_Recursive(1, [X0], X0, funcG, funcMu, Sigma, Beta, lTimeIntervals)
 
     p=np.mean(psi_hats)
     s=np.std(psi_hats)

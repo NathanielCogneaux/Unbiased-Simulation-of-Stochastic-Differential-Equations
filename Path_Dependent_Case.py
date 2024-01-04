@@ -86,12 +86,50 @@ def Unbiased_Simulation_Path_Dependent_Case_1D(funcG, X0, funcMu, Sigma, Beta, l
 
     return Psi_hat
 
-def automatic_differentiation_weight(T, x_k, x_k_minus_1, W_k)
 
-def Psi_US_1D_Recursive(k, X, funcG, funcMu, Sigma, Beta, lTimeIntervals):
+
+
+############ RECURSIVE IMPLEMENTATION ###########
+
+def prodWeight(T, x_k, x_k_minus_1, W_k):
+    # Initialize the products of the W^1_k of the estimator
+    Sigma_transpose_inv = 1/Sigma
+    # W^1_k loop
+    for j in range(1, N_t1t2 + 1):
+        prodW1[k] *= ((funcMu_k(k, lX_ti, arr_t1t2[j], arrX_tilde[j], numIter) - funcMu_k(k, lX_ti, arr_t1t2[j-1], arrX_tilde[j-1], numIter)) * arrSigma_transpose_inv*arrDeltaW[j])/arrDeltaT[j]
+    return prodW1
+
+#lTimeIntervals = (t1,..., tn)
+def Psi_US_1D_Recursive(k, Xk, X0, funcG, funcMu, Sigma, Beta, lTimeIntervals):
 
     if k == len(lTimeIntervals):
         return funcG(Xk) # to be checked
+    elif k == 0:
+        Xk = [X0]
+
+    Nk_tilde, arr_t1t2, arrDelta_t1t2, arrDeltaW_t1t2 = BrownianMotionSimulation_Interval(Beta, lTimeIntervals[k], lTimeIntervals[k+1])
+
+    # Initialize array to store X_tilde values
+    arrX_tilde = np.zeros(N_t1t2 + 2)
+
+    # Set initial value
+    arrX_tilde[0] = X0 ################### ATTENTION MUST CHANGE EACH TIMES
+
+    # local Euler scheme loop on [tk, tk+1]
+    for j in range(N_t1t2+1):
+        # Euler scheme formula
+        arrX_tilde[j+1] = arrX_tilde[j] + arrDelta_t1t2[j] * funcMu_k(k, lX_ti, arr_t1t2[j], arrX_tilde[j], numIter) + Sigma * arrDeltaW_t1t2[j]
+
+    lX_ti.append(arrX_tilde[-1])
+
+
+
+
+
+
+
+    Xk_tilde = np.zeros()
+    Xk_tilde[0] = X[-1]
 
     numIter = len(lTimeIntervals)
 
@@ -101,9 +139,9 @@ def Psi_US_1D_Recursive(k, X, funcG, funcMu, Sigma, Beta, lTimeIntervals):
     t2 = lTimeIntervals[k]
     t1 = lTimeIntervals[k-1]
 
+    X.append()
 
-
-    return np.exp(Beta*(t2-t1))*(Psi_US_1D_Recursive(k, Xk, funcG, funcMu, Sigma, Beta, lTimeIntervals) - Psi_US_1D_Recursive(k, Xk_0, funcG, funcMu, Sigma, Beta, lTimeIntervals))*Beta**(-)
+    return np.exp(Beta*(t2-t1))*(Psi_US_1D_Recursive(k, Xk, funcG, funcMu, Sigma, Beta, lTimeIntervals) - Psi_US_1D_Recursive(k, Xk_0, funcG, funcMu, Sigma, Beta, lTimeIntervals))*Beta**(-)*prodWeight(k,Xk_tilde)
 
 
 
@@ -134,7 +172,6 @@ def Psi_US_1D_Recursive(k, X, funcG, funcMu, Sigma, Beta, lTimeIntervals):
                 prodW1[k] *= ((funcMu_k(k, lX_ti, arr_t1t2[j], arrX_tilde[j], numIter) - funcMu_k(k, lX_ti, arr_t1t2[j-1], arrX_tilde[j-1], numIter)) * arrSigma_transpose_inv*arrDeltaW[j])/arrDeltaT[j]
 
 
-############################################
             Psi_tilde_1 = np.exp(Beta*T)*(funcG(arrX_hat[-1]) - funcG(arrX_hat[N_T]))*Beta**(-N_T)*prodW1
             Psi_tilde_2 = np.exp(Beta*T)*(funcG(arrX_hat[-1]) - funcG(arrX_hat[N_T]))*Beta**(-N_T)*prodW1
 
@@ -145,35 +182,8 @@ def Psi_US_1D_Recursive(k, X, funcG, funcMu, Sigma, Beta, lTimeIntervals):
     return Psi_hat
 
 
-###################################
 
-
-
-
-# La fonction principale de l'algorithme récursif
-def recursive_algorithm(k, x, N, T, W):
-    if k == n+1:
-        return funcG(x)
-    else:
-        # Calculer les valeurs récursives pour T et W si nécessaire.
-        T_k = RandomTimeGrid_Interval(Beta, t1, t2)(k, T, N)
-        W_k = update_W(k, W, T, N)
-
-        # Mettre à jour x en utilisant la formule récursive.
-        x_k_minus_1 = recursive_algorithm(k+1, x, N, T, W)  # Appel récursif
-        x_k = g(x_k_minus_1)  # Mettre à jour x en utilisant la fonction g
-
-        # Appliquer les poids de différentiation automatique.
-        omega = automatic_differentiation_weight(T, x_k, x_k_minus_1, W_k)
-
-        # Calculer le vecteur récursif final.
-        x_final = calculate_final_vector(x_k, omega)
-
-        return x_final
-
-
-
-#result = recursive_algorithm(n, x_initial, N, T, W)
+############ RECURSIVE IMPLEMENTATION ###########
 
 
 def MC_estimator(funcG, arrX0, funcMu, arrSigma, Beta, T, nDim, nSamples):

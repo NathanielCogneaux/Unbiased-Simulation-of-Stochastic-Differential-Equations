@@ -105,7 +105,7 @@ def Unbiased_Simulation_Markovian_Case_1D(funcG, X0, funcMu, Sigma, Beta, T):
         Psi_hat = np.exp(Beta*T)*(funcG(X_hat[-1]) - funcG(X_hat[N_T]))*Beta**(-1*N_T)*prodW1
 
     else :
-        Psi_hat = np.exp(Beta*T)*funcG(X_hat[-1])
+        Psi_hat = np.exp(Beta*T)*funcG(X_hat[-1])*Beta**(-1*N_T)
 
     return Psi_hat
 

@@ -125,15 +125,104 @@ def Unbiased_Simulation_Path_Dependent_Case_1D(funcG, X0, funcMu, Sigma, Beta, l
             Psi_tilde_1 = np.exp(Beta*(lTimeIntervals[k+1] - lTimeIntervals[k]))*funcG(arrX_hat[-1])
 
     return Psi_hat
+
+
+def iterative_psi_us_1d(Xk, X0, funcG, funcMu, Sigma, Beta, lTimeIntervals):
+    stack = []
+    results = {}
+    k = len(lTimeIntervals) - 1
+
+    while True:
+        if k == 0:
+            raise ValueError("INPUT ERROR: k must start at 1")
+        elif k == len(lTimeIntervals) - 1:
+            results[k] = funcG(Xk)
+            if not stack:
+                break
+            k, Xk, Nk_tilde, prodWk_tilde = stack.pop()
+            continue
+
+        tk_minus1, tk = lTimeIntervals[k-1], lTimeIntervals[k]
+        Nk_tilde, arr_tkminus1_tk, DeltaT_tkminus1_tk, DeltaW_tkminus1_tk = BrownianMotionSimulation_Interval(Beta, tk_minus1, tk)
+
+        Xk_tilde = np.zeros(Nk_tilde + 2)
+        Xk_tilde[0] = Xk[-1]
+
+        for j in range(Nk_tilde+1):
+            Xk_tilde[j+1] = Xk_tilde[j] + DeltaT_tkminus1_tk[j] * funcMu_k(k, Xk, arr_tkminus1_tk[j], Xk_tilde[j], len(lTimeIntervals), funcMu) + Sigma * DeltaW_tkminus1_tk[j]
+
+        if Nk_tilde > 0:
+            prodWk_tilde = 1
+            for j in range(1, Nk_tilde + 1):
+                prodWk_tilde *= ((funcMu_k(k, Xk, arr_tkminus1_tk[j], Xk_tilde[j], len(lTimeIntervals), funcMu) - funcMu_k(k, Xk, arr_tkminus1_tk[j-1], Xk_tilde[j-1], len(lTimeIntervals), funcMu)) * DeltaW_tkminus1_tk[j]) / (DeltaT_tkminus1_tk[j] * Sigma)
+
+            Xk_0 = Xk.copy()
+            Xk_0.append(Xk_tilde[-2])
+            Xk.append(Xk_tilde[-1])
+
+            stack.append((k+1, Xk, Nk_tilde, prodWk_tilde))
+            stack.append((k+1, Xk_0, Nk_tilde, prodWk_tilde))
+            k += 1
+        else:
+            Xk.append(Xk_tilde[-1])
+            k += 1
+
+    return results[len(lTimeIntervals) - 1] * np.exp(Beta * (tk - tk_minus1)) * Beta ** (-Nk_tilde) * prodWk_tilde
+
+def iterative_psi_us_1d(Xk, X0, funcG, funcMu, Sigma, Beta, lTimeIntervals):
+    stack = []
+    results = {}
+    k = len(lTimeIntervals) - 1
+    tk = tk_minus1 = None
+    Nk_tilde = prodWk_tilde = None
+
+    while True:
+        if k == 0:
+            raise ValueError("INPUT ERROR: k must start at 1")
+        elif k == len(lTimeIntervals) - 1:
+            results[k] = funcG(Xk)
+            if not stack:
+                break
+            k, Xk, tk_minus1, tk, Nk_tilde, prodWk_tilde = stack.pop()
+            continue
+
+        tk_minus1, tk = lTimeIntervals[k-1], lTimeIntervals[k]
+        Nk_tilde, arr_tkminus1_tk, DeltaT_tkminus1_tk, DeltaW_tkminus1_tk = BrownianMotionSimulation_Interval(Beta, tk_minus1, tk)
+
+        Xk_tilde = np.zeros(Nk_tilde + 2)
+        Xk_tilde[0] = Xk[-1]
+
+        for j in range(Nk_tilde + 1):
+            Xk_tilde[j+1] = Xk_tilde[j] + DeltaT_tkminus1_tk[j] * funcMu_k(k, Xk, arr_tkminus1_tk[j], Xk_tilde[j], len(lTimeIntervals), funcMu) + Sigma * DeltaW_tkminus1_tk[j]
+
+        if Nk_tilde > 0:
+            prodWk_tilde = 1
+            for j in range(1, Nk_tilde + 1):
+                prodWk_tilde *= ((funcMu_k(k, Xk, arr_tkminus1_tk[j], Xk_tilde[j], len(lTimeIntervals), funcMu) - funcMu_k(k, Xk, arr_tkminus1_tk[j-1], Xk_tilde[j-1], len(lTimeIntervals), funcMu)) * DeltaW_tkminus1_tk[j]) / (DeltaT_tkminus1_tk[j] * Sigma)
+
+            Xk_0 = Xk.copy()
+            Xk_0.append(Xk_tilde[-2])
+            Xk.append(Xk_tilde[-1])
+
+            stack.append((k+1, Xk, tk_minus1, tk, Nk_tilde, prodWk_tilde))
+            stack.append((k+1, Xk_0, tk_minus1, tk, Nk_tilde, prodWk_tilde))
+            k += 1
+        else:
+            Xk.append(Xk_tilde[-1])
+            k += 1
+
+    return results[len(lTimeIntervals) - 1] * np.exp(Beta * (tk - tk_minus1)) * Beta ** (-Nk_tilde) * prodWk_tilde
+    
 ############ NON RECURSIVE IMPLEMENTATION ###########
 '''
+
 
 def MC_estimator(funcG, X0, funcMu, Sigma, Beta, lTimeIntervals, nSamples):
 
     psi_hats=np.zeros(nSamples)
 
     for i in range(nSamples):
-        #psi_hats[i] = Unbiased_Simulation_Path_Dependent_Case_1D((funcG, X0, funcMu, Sigma, Beta, lTimeIntervals))
+        #psi_hats[i] = iterative_psi_us_1d([X0], X0, funcG, funcMu, Sigma, Beta, lTimeIntervals)
         psi_hats[i] = Psi_US_1D_Recursive(1, [X0], X0, funcG, funcMu, Sigma, Beta, lTimeIntervals)
 
     p=np.mean(psi_hats)

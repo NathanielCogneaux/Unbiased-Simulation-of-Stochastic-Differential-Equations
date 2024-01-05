@@ -38,10 +38,6 @@ def funcMu_k(k, Xk, t, Xj_tilde, numIter, funcMu):
         X.append(Xj_tilde)
     return funcMu(t, X)
 
-# exemple de funcMu possible
-def funcMu(t, lX):
-    return(np.sum(lX)/len(lX))
-
 
 ############ RECURSIVE IMPLEMENTATION ###########
 

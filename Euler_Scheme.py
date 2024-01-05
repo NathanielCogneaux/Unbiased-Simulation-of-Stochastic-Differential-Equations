@@ -1,7 +1,5 @@
 import numpy as np
 
-
-
 # Euler scheme for simulating SDEs over a fixed time grid.
 def Euler_Scheme_Gen(arrX0, funcMu, funcSigma, T, nDim, mSteps):
     dt=T/mSteps #time step size
@@ -39,48 +37,4 @@ def MC_EulerScheme_Pathdep_Example(arrX0, funcMu, funcSigma, T, nDim, mSteps, nS
     s = np.std(g_hats)
 
     return p, [p - 1.96 * s / np.sqrt(nSamples), p + 1.96 * s / np.sqrt(nSamples)], s / np.sqrt(nSamples)  # test,confidence interval,error
-
-
-
-
-##TEST for V0 in (4.2) (case d = 1)  (expected result : 0.1267 around)
-
-def funcMu(t,x): #func mu in SDE
-    return  0.1 * (np.sqrt(np.exp(x)) - 1) - 0.125
-
-def funcSigma(t,x): #func sigma in SDE
-    return Sigma_0
-
-def funcG (x): #payoff G for markovian case
-    return np.maximum(0, np.exp(x) - K)
-
-# Parameters
-arrX0 = np.array([0]) #Initial value
-T = 1 #Maturity
-nDim = 1 #Dim of process
-mSteps = 10 #Number of time steps in Euler Scheme
-nSamples = 100000 #Number of sim of MC
-K = 1   #Strike
-Sigma_0 = np.array([0.5])   #constant coeff in SDE process
-
-
-# Run Monte Carlo Simulation
-
-estimator, confidence_interval, error = MC_EulerScheme_Pathdep_Example(arrX0, funcMu, funcSigma, T, nDim, mSteps, nSamples, K)
-print("Estimator:", estimator)
-print("95% Confidence Interval:", confidence_interval)
-print("Standard Error:", error)
-
-
-estimator, confidence_interval, error = MC_EulerScheme_Markovian(funcG,arrX0, funcMu, funcSigma, T, nDim, mSteps, nSamples)
-print("Estimator:", estimator)
-print("95% Confidence Interval:", confidence_interval)
-print("Standard Error:", error)
-
-
-
-
-
-
-
 

@@ -50,7 +50,7 @@ def Psi_US_1D_Recursive(k, Xk, X0, funcG, funcMu, Sigma, Beta, lTimeIntervals):
 
     # Sanity checks & Final condition of the recursive function
     if k ==0:
-        return "INPUT ERROR : k must start at 1"
+        raise ValueError("INPUT ERROR: k must start at 1")
 
     elif k == len(lTimeIntervals):
         return funcG(Xk) # to be checked

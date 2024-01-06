@@ -127,7 +127,7 @@ K = 1 # strike
 
 N = 10**5
 T = 1
-lTimeIntervals = [i*T/10 for i in range(1,11)]
+lTimeIntervals = [i*T/10 for i in range(0,11)]
 
 def funcMu_PathDep (t,X):
     return 0.1 * (np.sqrt(np.min([M, np.exp(X[-1])])) - 1) - 0.125

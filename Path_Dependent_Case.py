@@ -28,7 +28,7 @@ def BrownianMotionSimulation_Interval(Beta, t1, t2):
     # Simulate the Delta of the Brownian motion W
     arrDeltaW_t1t2 = np.zeros(N_t1t2 + 1)
     for i in range(N_t1t2 + 1):
-        arrDeltaW_t1t2[i] = np.random.normal(loc=0.0, scale=arrDelta_t1t2[i])
+        arrDeltaW_t1t2[i] = np.random.normal(loc=0.0, scale=np.sqrt(arrDelta_t1t2[i]))
 
     return N_t1t2, arr_t1t2, arrDelta_t1t2, arrDeltaW_t1t2
 
@@ -70,7 +70,7 @@ def Psi_US_1D_Recursive(k, Xk, X0, funcG, funcMu, Sigma, Beta, lTimeIntervals):
         prodWk_tilde = 1
         # W^k_j loop
         for j in range(1, Nk_tilde + 1):
-            prodWk_tilde *= (funcMu_k(k, Xk, arr_tkminus1_tk[j], Xk_tilde[j], len(lTimeIntervals), funcMu) - funcMu_k(k, Xk, arr_tkminus1_tk[j-1], Xk_tilde[j-1], len(lTimeIntervals), funcMu)) * DeltaW_tkminus1_tk[j]/ (DeltaT_tkminus1_tk[j] * Sigma)
+            prodWk_tilde *= (funcMu_k(k, Xk, arr_tkminus1_tk[j], Xk_tilde[j], len(lTimeIntervals), funcMu) - funcMu_k(k, Xk, arr_tkminus1_tk[j-1], Xk_tilde[j-1], len(lTimeIntervals), funcMu)) * DeltaW_tkminus1_tk[j] / (DeltaT_tkminus1_tk[j] * Sigma)
 
         Xk_0 = Xk.copy()
         Xk_0.append(Xk_tilde[-2])

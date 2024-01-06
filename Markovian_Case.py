@@ -87,7 +87,7 @@ def Unbiased_Simulation_Markovian_Case_1D(funcG, X0, funcMu, Sigma, Beta, T):
     # Simulate the Delta of the d-dimensional Brownian motion W
     arrDeltaW = np.zeros(N_T+1)
     for i in range(N_T + 1):
-        arrDeltaW[i] = np.random.normal(loc=0.0, scale=arrDeltaT[i])
+        arrDeltaW[i] = np.random.normal(loc=0.0, scale=np.sqrt(arrDeltaT[i]))
 
     # Euler scheme loop
     for k in range(N_T+1):
@@ -97,10 +97,9 @@ def Unbiased_Simulation_Markovian_Case_1D(funcG, X0, funcMu, Sigma, Beta, T):
     if N_T > 0:
         # Initialize the products of the W^1_k of the estimator
         prodW1 = 1
-        Sigma_transpose_inv = 1/Sigma
         # W^1_k loop
         for k in range(1, N_T+1):
-            prodW1 *= ((funcMu(arrTimeGrid[k], X_hat[k]) - funcMu(arrTimeGrid[k-1], X_hat[k-1]))*Sigma_transpose_inv*arrDeltaW[k])/arrDeltaT[k]
+            prodW1 *= ((funcMu(arrTimeGrid[k], X_hat[k]) - funcMu(arrTimeGrid[k-1], X_hat[k-1]))*arrDeltaW[k])/(arrDeltaT[k]*Sigma)
 
         Psi_hat = np.exp(Beta*T)*(funcG(X_hat[-1]) - funcG(X_hat[N_T]))*Beta**(-1*N_T)*prodW1
 

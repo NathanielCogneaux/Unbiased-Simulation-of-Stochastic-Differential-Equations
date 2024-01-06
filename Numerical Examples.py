@@ -90,7 +90,7 @@ Sigma = 0.5
 Beta = 0.1
 
 lTimeIntervals = [0, T]
-
+'''
 print("RESULTS FOR THE MARKOVIAN EXAMPLE 4.2 CASE D = 1 (expected result : 0.205396 around)")
 print(" ")
 
@@ -111,7 +111,7 @@ print("Estimator US_Path_Dependent_Case:", estimator)
 print("95% Confidence Interval US_Path_Dependent_Case:", confidence_interval)
 print("Standard Error US_Path_Dependent_Case:", error)
 print(" ")
-
+'''
 
 ##TEST for V0_tilde in (4.2) (case d = 1)  (expected result : 0.1267 around)
 
@@ -127,12 +127,12 @@ K = 1 # strike
 
 N = 10**5
 T = 1
-lTimeIntervals = [i*T/10 for i in range(1, 11)]
+lTimeIntervals = [i*T/10 for i in range(1,11)]
 
 def funcMu_PathDep (t,X):
     return 0.1 * (np.sqrt(np.min([M, np.exp(X[-1])])) - 1) - 0.125
 def funcG_PathDep (lX):
-    return np.max([0, np.sum(np.exp(lX))/len(lX) - K])
+    return np.maximum(0, np.sum(np.exp(lX))/len(lX) - K)
 
 
 # Run Monte Carlo Simulations
@@ -148,3 +148,4 @@ print("Estimator US_Path_Dependent_Case:", estimator)
 print("95% Confidence Interval US_Path_Dependent_Case:", confidence_interval)
 print("Standard Error US_Path_Dependent_Case:", error)
 print(" ")
+

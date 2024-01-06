@@ -45,7 +45,7 @@ def funcMu_k(k, Xk, t, Xj_tilde, numIter, funcMu):
 def Psi_US_1D_Recursive(k, Xk, X0, funcG, funcMu, Sigma, Beta, lTimeIntervals):
 
     # Sanity checks & Final condition of the recursive function
-    if k ==0:
+    if k == 0:
         raise ValueError("INPUT ERROR: k must start at 1")
 
     elif k == len(lTimeIntervals):

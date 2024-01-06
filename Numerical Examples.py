@@ -67,8 +67,8 @@ print(Markovian_Case.MC_estimator(funcG, X_0, funcMu, Sigma_0, Beta, T,N))
 
 def funcMu(t,x): #func mu in SDE
     return  0.1 * (np.sqrt(np.exp(x)) - 1) - 0.125
-def funcMu2(t,x): #func mu in SDE
-    return  0.1 * (np.sqrt(np.exp(x[-1])) - 1) - 0.125
+def funcMu2_TEST(t,x): #func mu in SDE
+    return  0.1 * (np.sqrt(np.exp(x)) - 1) - 0.125
 def funcSigma(t,x): #func sigma in SDE
     return Sigma_0
 def funcG (x): #payoff G for markovian case
@@ -90,7 +90,7 @@ Sigma = 0.5
 Beta = 0.1
 
 lTimeIntervals = [0, T]
-'''
+
 print("RESULTS FOR THE MARKOVIAN EXAMPLE 4.2 CASE D = 1 (expected result : 0.205396 around)")
 print(" ")
 
@@ -106,12 +106,12 @@ print("95% Confidence Interval US_Markovian_Case:", confidence_interval)
 print("Standard Error US_Markovian_Case:", error)
 print(" ")
 
-estimator, confidence_interval, error = Path_Dependent_Case.MC_estimator(funcG2, X0, funcMu2, Sigma, Beta, lTimeIntervals, N)
+estimator, confidence_interval, error = Path_Dependent_Case.MC_estimator(funcG2, X0, funcMu2_TEST, Sigma, Beta, lTimeIntervals, N)
 print("Estimator US_Path_Dependent_Case:", estimator)
 print("95% Confidence Interval US_Path_Dependent_Case:", confidence_interval)
 print("Standard Error US_Path_Dependent_Case:", error)
 print(" ")
-'''
+
 
 ##TEST for V0_tilde in (4.2) (case d = 1)  (expected result : 0.1267 around)
 
@@ -138,13 +138,13 @@ def funcG_PathDep (lX):
 
 
 # Run Monte Carlo Simulations
-'''
+
 estimator, confidence_interval, error = Euler_Scheme.MC_EulerScheme_Pathdep_Example(arrX0, funcMu, funcSigma, T, nDim, mSteps, nSamples, K)
 print("Estimator MC_EulerScheme_Pathdep_Example:", estimator)
 print("95% Confidence Interval MC_EulerScheme_Pathdep_Example::", confidence_interval)
 print("Standard Error MC_EulerScheme_Pathdep_Example::", error)
 print(" ")
-'''
+
 estimator, confidence_interval, error = Path_Dependent_Case.MC_estimator(funcG_PathDep, X0, funcMu_PathDep_TEST, Sigma, Beta, lTimeIntervals, N)
 print("Estimator US_Path_Dependent_Case:", estimator)
 print("95% Confidence Interval US_Path_Dependent_Case:", confidence_interval)

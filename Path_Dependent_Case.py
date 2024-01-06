@@ -49,7 +49,7 @@ def Psi_US_1D_Recursive(k, Xk, X0, funcG, funcMu, Sigma, Beta, lTimeIntervals):
         raise ValueError("INPUT ERROR: k must start at 1")
 
     elif k == len(lTimeIntervals):
-        return funcG(Xk) # to be checked
+        return funcG(Xk[1:])
 
     tk_minus1, tk = lTimeIntervals[k-1], lTimeIntervals[k]
     Nk_tilde, arr_tkminus1_tk, DeltaT_tkminus1_tk, DeltaW_tkminus1_tk = BrownianMotionSimulation_Interval(Beta, tk_minus1, tk)
@@ -63,20 +63,22 @@ def Psi_US_1D_Recursive(k, Xk, X0, funcG, funcMu, Sigma, Beta, lTimeIntervals):
     # local Euler scheme loop on [tk-1, tk]
     for j in range(Nk_tilde+1):
         # Euler scheme formula
-        Xk_tilde[j+1] = Xk_tilde[j] + DeltaT_tkminus1_tk[j] * funcMu_k(k, Xk, arr_tkminus1_tk[j], Xk_tilde[j], len(lTimeIntervals), funcMu) + Sigma * DeltaW_tkminus1_tk[j]
+        #Xk_tilde[j+1] = Xk_tilde[j] + DeltaT_tkminus1_tk[j] * funcMu_k(k, Xk, arr_tkminus1_tk[j], Xk_tilde[j], len(lTimeIntervals), funcMu) + Sigma * DeltaW_tkminus1_tk[j]
+        Xk_tilde[j+1] = Xk_tilde[j] + DeltaT_tkminus1_tk[j] * funcMu(arr_tkminus1_tk[j], Xk_tilde[j]) + Sigma * DeltaW_tkminus1_tk[j]
 
     if Nk_tilde>0:
         # Initialize the products of the W^1_k of the estimator
         prodWk_tilde = 1
         # W^k_j loop
         for j in range(1, Nk_tilde + 1):
-            prodWk_tilde *= (funcMu_k(k, Xk, arr_tkminus1_tk[j], Xk_tilde[j], len(lTimeIntervals), funcMu) - funcMu_k(k, Xk, arr_tkminus1_tk[j-1], Xk_tilde[j-1], len(lTimeIntervals), funcMu)) * DeltaW_tkminus1_tk[j] / (DeltaT_tkminus1_tk[j] * Sigma)
+            #prodWk_tilde *= (funcMu_k(k, Xk, arr_tkminus1_tk[j], Xk_tilde[j], len(lTimeIntervals), funcMu) - funcMu_k(k, Xk, arr_tkminus1_tk[j-1], Xk_tilde[j-1], len(lTimeIntervals), funcMu)) * DeltaW_tkminus1_tk[j] / (DeltaT_tkminus1_tk[j] * Sigma)
+            prodWk_tilde *= (funcMu(arr_tkminus1_tk[j], Xk_tilde[j]) - funcMu(arr_tkminus1_tk[j-1], Xk_tilde[j-1])) * DeltaW_tkminus1_tk[j] / (DeltaT_tkminus1_tk[j] * Sigma)
 
         Xk_0 = Xk.copy()
         Xk_0.append(Xk_tilde[-2])
         Xk.append(Xk_tilde[-1])
 
-        return np.exp(Beta*(tk-tk_minus1))*(Psi_US_1D_Recursive(k+1, Xk, X0, funcG, funcMu, Sigma, Beta, lTimeIntervals) - Psi_US_1D_Recursive(k+1, Xk_0, X0, funcG, funcMu, Sigma, Beta, lTimeIntervals))*Beta**(-Nk_tilde)*prodWk_tilde
+        return np.exp(Beta*(tk-tk_minus1))*(Psi_US_1D_Recursive(k+1, Xk, X0, funcG, funcMu, Sigma, Beta, lTimeIntervals) - Psi_US_1D_Recursive(k+1, Xk_0, X0, funcG, funcMu, Sigma, Beta, lTimeIntervals))*Beta**(-1*Nk_tilde)*prodWk_tilde
 
     Xk.append(Xk_tilde[-1])
     return np.exp(Beta*(tk-tk_minus1))*Psi_US_1D_Recursive(k+1, Xk, X0, funcG, funcMu, Sigma, Beta, lTimeIntervals)

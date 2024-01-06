@@ -131,19 +131,21 @@ lTimeIntervals = [i*T/10 for i in range(1,11)]
 
 def funcMu_PathDep (t,X):
     return 0.1 * (np.sqrt(np.min([M, np.exp(X[-1])])) - 1) - 0.125
+def funcMu_PathDep_TEST (t,x):
+    return 0.1 * (np.sqrt(np.minimum(M, np.exp(x))) - 1) - 0.125
 def funcG_PathDep (lX):
     return np.maximum(0, np.sum(np.exp(lX))/len(lX) - K)
 
 
 # Run Monte Carlo Simulations
-
+'''
 estimator, confidence_interval, error = Euler_Scheme.MC_EulerScheme_Pathdep_Example(arrX0, funcMu, funcSigma, T, nDim, mSteps, nSamples, K)
 print("Estimator MC_EulerScheme_Pathdep_Example:", estimator)
 print("95% Confidence Interval MC_EulerScheme_Pathdep_Example::", confidence_interval)
 print("Standard Error MC_EulerScheme_Pathdep_Example::", error)
 print(" ")
-
-estimator, confidence_interval, error = Path_Dependent_Case.MC_estimator(funcG_PathDep, X0, funcMu_PathDep, Sigma, Beta, lTimeIntervals, N)
+'''
+estimator, confidence_interval, error = Path_Dependent_Case.MC_estimator(funcG_PathDep, X0, funcMu_PathDep_TEST, Sigma, Beta, lTimeIntervals, N)
 print("Estimator US_Path_Dependent_Case:", estimator)
 print("95% Confidence Interval US_Path_Dependent_Case:", confidence_interval)
 print("Standard Error US_Path_Dependent_Case:", error)

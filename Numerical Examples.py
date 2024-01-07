@@ -109,7 +109,7 @@ data = {
     'Method': Method,
     'Mean value': Mean_value,
     'Statistical error': statistical_error,
-    'confidence_interval': conf_interval,
+    '95% Confidence Interval': conf_interval,
     'Computation time': Computation_time
 }
 
@@ -222,7 +222,7 @@ data = {
     'Method': Method,
     'Mean value': Mean_value,
     'Statistical error': statistical_error,
-    'confidence_interval': conf_interval,
+    '95% Confidence Interval': conf_interval,
     'Computation time': Computation_time
 }
 

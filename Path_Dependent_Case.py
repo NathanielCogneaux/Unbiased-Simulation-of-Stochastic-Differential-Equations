@@ -102,7 +102,6 @@ def Psi_US_Recursive(k, Xk, X0, funcG, funcMu, Sigma, Beta, lTimeIntervals):
 
 
 # We now provide a Monte Carlo estimation of the Unbiased Simulation Estimate
-
 def MC_estimator(funcG, X0, funcMu, Sigma, Beta, lTimeIntervals, nSamples):
 
     psi_hats=np.zeros(nSamples)

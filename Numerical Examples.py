@@ -1,64 +1,24 @@
+# In this section we will call the different algorithms to get our numerical tests
+# and computation times
+
 import numpy as np
 
 import Markovian_Case
 import Path_Dependent_Case
 import Euler_Scheme
 
+
+#import time
 '''
-# First Example
-# V0 := E[(ST − K)+]
+def your_algorithm():
+    # Your algorithm's code goes here
+    pass
 
-# Parameters:
-nDim = 1
-X_0 = 0
-Beta = 0.1 # Beta constant
-Sigma_0 = np.array([0.5])
-M = 4 # large
-K = 1 # strike
-T = 1
-N = 10**6
-EulerScheme_mSteps = 10
+start_time = time.time()
+your_algorithm()
+end_time = time.time()
 
-def funcMu (t,x):
-    return 0.1 * (np.sqrt(np.minimum(M, np.exp(x))) - 1.0) - 0.125
-def funcSigma (t,x):
-    return Sigma_0
-def funcG (x):
-    return np.maximum(0, np.exp(x) - K)
-
-
-#print(Markovian_Case.Unbiased_Simulation_Markovian_Case(funcG, X_0, funcMu, Sigma_0, Beta, T, nDim))
-print(Markovian_Case.MC_estimator(funcG, X_0, funcMu, Sigma_0, Beta, T, nDim, N))
-print(Euler_Scheme.MC_EulerScheme(funcG, X_0, funcMu, funcSigma, T, nDim, EulerScheme_mSteps, N))
-'''
-
-
-'''
-# TEST 1D ALONE
-
-# Parameters:
-nDim = 1
-X_0 = 0
-Beta = 0.1 # Beta constant
-Sigma_0 = 0.5
-M = 4 # large
-K = 1 # strike
-T = 1
-N = 10**5
-EulerScheme_mSteps = 10
-
-def funcMu (t,x):
-    return (0.1 * (np.sqrt(np.min([M, np.exp(x)])) - 1.0) - 0.125)
-def funcSigma (t,x) :
-    return Sigma_0
-def funcG (x) :
-    return np.max([0, np.exp(x) - K])
-
-
-#print(Markovian_Case.Unbiased_Simulation_Markovian_Case(funcG, X_0, funcMu, Sigma_0, Beta, T, nDim))
-print(Markovian_Case.MC_estimator(funcG, X_0, funcMu, Sigma_0, Beta, T,N))
-#print(Euler_Scheme.MC_EulerScheme(funcG, X_0, funcMu, funcSigma, T, nDim, EulerScheme_mSteps, N))
-
+print(f"Execution time: {end_time - start_time} seconds")
 '''
 
 
@@ -93,19 +53,19 @@ lTimeIntervals = [0, T]
 
 print("RESULTS FOR THE MARKOVIAN EXAMPLE 4.2 CASE D = 1 (expected result : 0.205396 around)")
 print(" ")
-
+'''
 estimator, confidence_interval, error = Euler_Scheme.MC_EulerScheme_Markovian(funcG,arrX0, funcMu, funcSigma, T, nDim, mSteps, nSamples)
 print("Estimator MC_EulerScheme_Markovian:", estimator)
 print("95% Confidence Interval MC_EulerScheme_Markovian:", confidence_interval)
 print("Standard Error MC_EulerScheme_Markovian:", error)
 print(" ")
-
+'''
 estimator, confidence_interval, error = Markovian_Case.MC_estimator(funcG, X0, funcMu, Sigma, Beta, T, nDim, nSamples)
 print("Estimator US_Markovian_Case:", estimator)
 print("95% Confidence Interval US_Markovian_Case:", confidence_interval)
 print("Standard Error US_Markovian_Case:", error)
 print(" ")
-
+'''
 estimator, confidence_interval, error = Path_Dependent_Case.MC_estimator(funcG2, X0, funcMu2_TEST, Sigma, Beta, lTimeIntervals, N)
 print("Estimator US_Path_Dependent_Case:", estimator)
 print("95% Confidence Interval US_Path_Dependent_Case:", confidence_interval)
@@ -150,4 +110,4 @@ print("Estimator US_Path_Dependent_Case:", estimator)
 print("95% Confidence Interval US_Path_Dependent_Case:", confidence_interval)
 print("Standard Error US_Path_Dependent_Case:", error)
 print(" ")
-
+'''

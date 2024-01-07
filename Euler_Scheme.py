@@ -1,7 +1,9 @@
 # In this section we define the different Euler discretization Schemes
 # we are using for the different examples
 
+
 import numpy as np
+
 
 # Euler scheme for simulating SDEs over a fixed time grid.
 def Euler_Scheme(X0, funcMu, funcSigma, T, nDim, mSteps):
@@ -58,6 +60,7 @@ def EulerScheme_Numex3(m, N, sigma, K, x, T):
 
 
 # We now provide a Monte Carlo estimation of Euler Scheme in the Markovian Case
+
 def MC_estimator_EulerScheme_Markovian(funcG, X0, funcMu, funcSigma, T, nDim, mSteps, nSamples):
 
     g_hats = np.zeros(nSamples)
@@ -73,6 +76,7 @@ def MC_estimator_EulerScheme_Markovian(funcG, X0, funcMu, funcSigma, T, nDim, mS
 
 
 # We now provide a Monte Carlo estimation of Euler Scheme for a path-dependent payoff
+
 def MC_estimator_EulerScheme_Pathdep(funcG, X0, funcMu, funcSigma, T, nDim, mSteps, nSamples):
 
     g_hats = np.zeros(nSamples)

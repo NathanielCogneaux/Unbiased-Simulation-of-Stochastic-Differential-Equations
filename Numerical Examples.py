@@ -81,7 +81,7 @@ conf_interval = []
 statistical_error = []
 Computation_time = []
 for i in range(4, 9):
-    nSamples = 10 ** i ############
+    nSamples = 10 ** i
     start_time = time.time()
     estimator, confidence_interval, error = Markovian_Case.MC_estimator(funcG, X0, funcMu, Sigma0, Beta, T, nDim, nSamples)
     Computation_time.append(time.time() - start_time)

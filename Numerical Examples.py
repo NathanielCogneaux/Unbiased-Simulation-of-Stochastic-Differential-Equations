@@ -53,13 +53,13 @@ lTimeIntervals = [0, T]
 
 print("RESULTS FOR THE MARKOVIAN EXAMPLE 4.2 CASE D = 1 (expected result : 0.205396 around)")
 print(" ")
-'''
-estimator, confidence_interval, error = Euler_Scheme.MC_EulerScheme_Markovian(funcG,arrX0, funcMu, funcSigma, T, nDim, mSteps, nSamples)
+
+estimator, confidence_interval, error = Euler_Scheme.MC_estimator_EulerScheme_Markovian(funcG,arrX0, funcMu, funcSigma, T, nDim, mSteps, nSamples)
 print("Estimator MC_EulerScheme_Markovian:", estimator)
 print("95% Confidence Interval MC_EulerScheme_Markovian:", confidence_interval)
 print("Standard Error MC_EulerScheme_Markovian:", error)
 print(" ")
-'''
+
 estimator, confidence_interval, error = Markovian_Case.MC_estimator(funcG, X0, funcMu, Sigma, Beta, T, nDim, nSamples)
 print("Estimator US_Markovian_Case:", estimator)
 print("95% Confidence Interval US_Markovian_Case:", confidence_interval)
@@ -98,13 +98,13 @@ def funcG_PathDep (lX):
 
 
 # Run Monte Carlo Simulations
-'''
-estimator, confidence_interval, error = Euler_Scheme.MC_EulerScheme_Pathdep_Example(arrX0, funcMu, funcSigma, T, nDim, mSteps, nSamples, K)
+
+estimator, confidence_interval, error = Euler_Scheme.MC_estimator_EulerScheme_Pathdep(funcG_PathDep, arrX0, funcMu, funcSigma, T, nDim, mSteps, nSamples, K)
 print("Estimator MC_EulerScheme_Pathdep_Example:", estimator)
 print("95% Confidence Interval MC_EulerScheme_Pathdep_Example::", confidence_interval)
 print("Standard Error MC_EulerScheme_Pathdep_Example::", error)
 print(" ")
-'''
+
 estimator, confidence_interval, error = Path_Dependent_Case.MC_estimator(funcG_PathDep, X0, funcMu_PathDep_TEST, Sigma, Beta, lTimeIntervals, N)
 print("Estimator US_Path_Dependent_Case:", estimator)
 print("95% Confidence Interval US_Path_Dependent_Case:", confidence_interval)

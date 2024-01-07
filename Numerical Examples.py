@@ -42,7 +42,7 @@ lTimeIntervals = [0, T]
 
 # μ in the provided SDE
 def funcMu(t, x):
-    return 0.1 * (np.sqrt(np.minimum(M, np.exp(x))) - 1) - 0.125
+    return 0.1 * (np.sqrt(np.exp(x)) - 1) - 0.125
 # Sigma in the provided SDE
 def funcSigma(t, x):
     return [Sigma0]
@@ -89,7 +89,7 @@ print(" ")
 # Parameters:
 
 Beta = 0.05 # Beta constant
-lTimeIntervals = [i*T/10 for i in range(0,11)]
+lTimeIntervals = [i*T/10 for i in range(0, 11)]
 
 # We adapt the new path dependent payoff to the example
 def funcG_PathDep (lX):

@@ -2,6 +2,7 @@
 # and computation times
 
 import time
+import datetime
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -10,6 +11,38 @@ from matplotlib.table import Table
 import Euler_Scheme
 import Markovian_Case
 import Path_Dependent_Case
+
+
+
+# function to convert time into hours, minutes, and seconds
+def convert_to_hms(seconds):
+    # Extract whole seconds and fractional part
+    whole_seconds = int(seconds)
+    fractional_seconds = seconds - whole_seconds
+
+    # Convert whole seconds to a timedelta object
+    time_delta = datetime.timedelta(seconds=whole_seconds)
+
+    # Extract hours, minutes, and remaining whole seconds
+    hours, remainder = divmod(time_delta.seconds, 3600)
+    minutes, whole_seconds = divmod(remainder, 60)
+
+    # Combine whole seconds with fractional part and round to 6 decimals
+    precise_seconds = round(whole_seconds + fractional_seconds, 6)
+
+    # Format the result
+    result = ""
+    if hours > 0:
+        result += f"{hours}h "
+    if minutes > 0 or hours > 0:  # Include minutes if there are hours
+        result += f"{minutes}min "
+    result += f"{precise_seconds}s"
+
+    return result.strip()
+
+
+
+
 
 ##### TEST for V0 in (4.2) (expected result : 0.205396 around) #####
 
@@ -32,9 +65,6 @@ lTimeIntervals = [0, T]
 # μ in the provided SDE
 def funcMu(t, x):
     return 0.1 * (np.sqrt(np.exp(x)) - 1) - 0.125
-# Sigma in the provided SDE
-def funcSigma(t, x):
-    return [Sigma0]
 # Payoff G in the provided example (Call option)
 def funcG(x):
     return np.maximum(0, np.exp(x) - K)
@@ -50,7 +80,7 @@ print("RESULTS FOR THE MARKOVIAN EXAMPLE 4.2 (expected result : 0.205396 around)
 print(" ")
 
 start_time = time.time()
-estimator, confidence_interval, error = Euler_Scheme.MC_estimator_EulerScheme_Markovian(funcG, X0, funcMu, funcSigma, T, nDim, mSteps, nSamples)
+estimator, confidence_interval, error = Euler_Scheme.MC_estimator_EulerScheme_Markovian(funcG, X0, funcMu, Sigma0, T, nDim, mSteps, nSamples)
 print("Estimator MC_estimator_EulerScheme_Markovian:", estimator)
 print("95% Confidence Interval MC_EulerScheme_Markovian:", confidence_interval)
 print("Standard Error MC_EulerScheme_Markovian:", error)
@@ -91,26 +121,26 @@ for i in range(4, 9):
     Method.append(f"US (N = 10^{i})")
 
     start_time = time.time()
-    estimator, confidence_interval, error = Euler_Scheme.MC_estimator_EulerScheme_Markovian(funcG, X0, funcMu, funcSigma, T, nDim, mSteps, nSamples)
+    estimator, confidence_interval, error = Euler_Scheme.MC_estimator_EulerScheme_Markovian(funcG, X0, funcMu, Sigma0, T, nDim, mSteps, nSamples)
     Computation_time.append(time.time() - start_time)
     Mean_value.append(estimator)
     conf_interval.append(confidence_interval)
     statistical_error.append(error)
     Method.append(f"Euler Scheme (N = 10^{i})")
 
-# Round numbers to 9 decimals and make sure confidence intervals fit in the cell
-rounded_mean_value = [round(val, 9) for val in Mean_value]
+# Round numbers and make sure confidence it fits in the cell
+rounded_mean_value = [round(val, 8) for val in Mean_value]
 rounded_statistical_error = [round(val, 9) for val in statistical_error]
-rounded_computation_time = [round(val, 9) for val in Computation_time]
-formatted_conf_interval = [f"[{round(ci[0], 9)}, {round(ci[1], 9)}]" for ci in conf_interval]
+formatted_computation_time = [convert_to_hms(val) for val in Computation_time]
+formatted_conf_interval = [f"[{round(ci[0], 8)}, {round(ci[1], 8)}]" for ci in conf_interval]
 
 # Sample data:
 data = {
     'Method': Method,
-    'Mean value': Mean_value,
-    'Statistical error': statistical_error,
-    '95% Confidence Interval': conf_interval,
-    'Computation time': Computation_time
+    'Mean value': rounded_mean_value,
+    'Statistical error': rounded_statistical_error,
+    '95% Confidence Interval': formatted_conf_interval,
+    'Computation time': formatted_computation_time
 }
 
 # Convert data to a Pandas DataFrame
@@ -170,7 +200,7 @@ print("RESULTS FOR THE PATH DEPENDENT EXAMPLE 4.2 (expected result : 0.1267 arou
 print(" ")
 
 start_time = time.time()
-estimator, confidence_interval, error = Euler_Scheme.MC_estimator_EulerScheme_Pathdep(funcG_PathDep, X0, funcMu, funcSigma, T, nDim, mSteps, nSamples)
+estimator, confidence_interval, error = Euler_Scheme.MC_estimator_EulerScheme_Pathdep(funcG_PathDep, X0, funcMu, Sigma0, T, nDim, mSteps, nSamples)
 print("Estimator MC_estimator_EulerScheme_Pathdep:", estimator)
 print("95% Confidence Interval MC_EulerScheme_Pathdep_Example::", confidence_interval)
 print("Standard Error MC_EulerScheme_Pathdep_Example::", error)
@@ -204,26 +234,26 @@ for i in range(4, 8):
     Method.append(f"US (N = 10^{i})")
 
     start_time = time.time()
-    estimator, confidence_interval, error = Euler_Scheme.MC_estimator_EulerScheme_Pathdep(funcG_PathDep, X0, funcMu, funcSigma, T, nDim, mSteps, nSamples)
+    estimator, confidence_interval, error = Euler_Scheme.MC_estimator_EulerScheme_Pathdep(funcG_PathDep, X0, funcMu, Sigma0, T, nDim, mSteps, nSamples)
     Computation_time.append(time.time() - start_time)
     Mean_value.append(estimator)
     conf_interval.append(confidence_interval)
     statistical_error.append(error)
     Method.append(f"Euler Scheme (N = 10^{i})")
 
-# Round numbers to 9 decimals and make sure confidence intervals fit in the cell
-rounded_mean_value = [round(val, 9) for val in Mean_value]
+# Round numbers and make sure confidence it fits in the cell
+rounded_mean_value = [round(val, 8) for val in Mean_value]
 rounded_statistical_error = [round(val, 9) for val in statistical_error]
-rounded_computation_time = [round(val, 9) for val in Computation_time]
-formatted_conf_interval = [f"[{round(ci[0], 9)}, {round(ci[1], 9)}]" for ci in conf_interval]
+formatted_computation_time = [convert_to_hms(val) for val in Computation_time]
+formatted_conf_interval = [f"[{round(ci[0], 8)}, {round(ci[1], 8)}]" for ci in conf_interval]
 
 # Sample data:
 data = {
     'Method': Method,
-    'Mean value': Mean_value,
-    'Statistical error': statistical_error,
-    '95% Confidence Interval': conf_interval,
-    'Computation time': Computation_time
+    'Mean value': rounded_mean_value,
+    'Statistical error': rounded_statistical_error,
+    '95% Confidence Interval': formatted_conf_interval,
+    'Computation time': formatted_computation_time
 }
 
 # Convert data to a Pandas DataFrame
@@ -258,3 +288,4 @@ plt.tight_layout()
 
 # Save the table as an image file
 plt.savefig('C:/Users/natha/OneDrive/Bureau/MASEF/S1/MC methods FE applied fi/Numerical results/Path Dependent Numerical results plot.png')
+

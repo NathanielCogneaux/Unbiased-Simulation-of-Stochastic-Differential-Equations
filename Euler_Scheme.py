@@ -6,10 +6,10 @@ import numpy as np
 
 
 # Euler scheme for simulating SDEs over a fixed time grid.
-def Euler_Scheme(X0, funcMu, funcSigma, T, nDim, mSteps):
+def Euler_Scheme(X0, funcMu, Sigma0, T, mSteps):
     #time step size
     dt = T / mSteps
-    X = np.zeros((mSteps+1, nDim))
+    X = np.zeros(mSteps+1)
 
     # the Euler scheme at X0
     X[0] = X0
@@ -18,12 +18,8 @@ def Euler_Scheme(X0, funcMu, funcSigma, T, nDim, mSteps):
 
     # Euler scheme loop
     for i in range(mSteps):
-
-        # Brownian motion simulation
-        dW = np.sqrt(dt) * np.random.randn(nDim)
-
         # Euler scheme formula
-        X[i+1] = X[i] + funcMu(time_grid[i], X[i])*dt + funcSigma(time_grid[i], X[i]) @ dW
+        X[i+1] = X[i] + funcMu(time_grid[i], X[i])*dt + Sigma0 * np.random.normal(loc=0.0, scale=np.sqrt(dt))
 
     return X
 
@@ -60,12 +56,12 @@ def EulerScheme_Numex3(m, N, sigma, K, x, T):
 
 
 # We now provide a Monte Carlo estimation of Euler Scheme in the Markovian Case
-def MC_estimator_EulerScheme_Markovian(funcG, X0, funcMu, funcSigma, T, nDim, mSteps, nSamples):
+def MC_estimator_EulerScheme_Markovian(funcG, X0, funcMu, Sigma0, T, nDim, mSteps, nSamples):
 
     g_hats = np.zeros(nSamples)
 
     for i in range(nSamples):
-        g_hats[i] = funcG(Euler_Scheme(X0, funcMu, funcSigma, T, nDim, mSteps)[-1])
+        g_hats[i] = funcG(Euler_Scheme(X0, funcMu, Sigma0, T, mSteps)[-1])
 
     p = np.mean(g_hats)
     s = np.std(g_hats)
@@ -75,12 +71,12 @@ def MC_estimator_EulerScheme_Markovian(funcG, X0, funcMu, funcSigma, T, nDim, mS
 
 
 # We now provide a Monte Carlo estimation of Euler Scheme for a path-dependent payoff
-def MC_estimator_EulerScheme_Pathdep(funcG, X0, funcMu, funcSigma, T, nDim, mSteps, nSamples):
+def MC_estimator_EulerScheme_Pathdep(funcG, X0, funcMu, Sigma0, T, nDim, mSteps, nSamples):
 
     g_hats = np.zeros(nSamples)
 
     for i in range(nSamples):
-        g_hats[i] = funcG(Euler_Scheme(X0, funcMu, funcSigma, T, nDim, mSteps)[1:])
+        g_hats[i] = funcG(Euler_Scheme(X0, funcMu, Sigma0, T, mSteps)[1:])
 
     p = np.mean(g_hats)
     s = np.std(g_hats)

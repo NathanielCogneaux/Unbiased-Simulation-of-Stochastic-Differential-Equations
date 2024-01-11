@@ -24,6 +24,29 @@ def Euler_Scheme(X0, funcMu, Sigma0, T, mSteps):
     return X
 
 
+# Euler scheme for simulating SDEs over a fixed time grid.
+def Euler_Scheme_PathDep(X0, funcMu, Sigma0, T, mSteps, lTimeIntervals): #mSteps for each subinterval
+    lX_tk = []
+    for k in range(len(lTimeIntervals)):
+        #time step size
+        dt = (lTimeIntervals[k] - lTimeIntervals[k-1]) / mSteps
+        X_tk_tkminus1 = np.zeros(mSteps+1)
+
+        # the Euler scheme at X0
+        X[0] = X0
+        # Get the grid (t0,...,tm=T) with steps dt
+        time_grid = np.linspace(0, T, mSteps + 1)
+
+        # Euler scheme loop
+        for i in range(mSteps):
+            # Euler scheme formula
+            X_tk_tkminus1[i+1] = XX_tk_tkminus1i] + funcMu(time_grid[i], X[i])*dt + Sigma0 * np.random.normal(loc=0.0, scale=np.sqrt(dt))
+
+        lX_tk.append(X_tk_tkminus1[-1])
+
+    return X
+
+
 """
     Euler Scheme for the SDE: dX_t = 2σ / (1 + X_t^2) dW_t.
     (example 3 of numerical methods)

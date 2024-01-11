@@ -75,7 +75,7 @@ def funcG_PathDep(x):
 
 
 # Run The Simulations
-
+'''
 print("RESULTS FOR THE MARKOVIAN EXAMPLE 4.2 (expected result : 0.205396 around)")
 print(" ")
 
@@ -102,7 +102,7 @@ print("95% Confidence Interval US_Path_Dependent_Case:", confidence_interval)
 print("Standard Error US_Path_Dependent_Case:", error)
 print(f"Execution time: {time.time() - start_time} seconds")
 print(" ")
-
+'''
 
 
 Method = []
@@ -110,7 +110,8 @@ Mean_value = []
 conf_interval = []
 statistical_error = []
 Computation_time = []
-for i in range(4, 9):
+Estimated_bias= []
+for i in range(2, 5): #(4, 9)
     nSamples = 10 ** i
     start_time = time.time()
     estimator, confidence_interval, error = Markovian_Case.MC_estimator(funcG, X0, funcMu, Sigma0, Beta, T, nDim, nSamples)
@@ -128,11 +129,16 @@ for i in range(4, 9):
     statistical_error.append(error)
     Method.append(f"Euler Scheme (N = 10^{i})")
 
+for i in range(len(Mean_value)):
+    Estimated_bias.append(Mean_value[i] - Mean_value[-2])
+
+
 # Round numbers and make sure confidence it fits in the cell
 rounded_mean_value = [round(val, 8) for val in Mean_value]
 rounded_statistical_error = [round(val, 9) for val in statistical_error]
 formatted_computation_time = [convert_to_hms(val) for val in Computation_time]
 formatted_conf_interval = [f"[{round(ci[0], 8)}, {round(ci[1], 8)}]" for ci in conf_interval]
+rounded_Estimated_bias = [round(val,9) for val in Estimated_bias]
 
 # Sample data:
 data = {
@@ -176,8 +182,46 @@ plt.tight_layout()
 # Save the table as an image file
 plt.savefig('C:/Users/natha/OneDrive/Bureau/MASEF/S1/MC methods FE applied fi/Numerical results/Markovian Numerical results plot.png')
 
+# Sample data
+data = {
+    'Method': Method,
+    'Mean value': rounded_mean_value,
+    'Estimated Bias': rounded_Estimated_bias,
+    'Statistical error': rounded_statistical_error,
+}
 
+# Convert data to a Pandas DataFrame
+df = pd.DataFrame(data)
 
+# Adjust the figure size (width, height) to accommodate the data
+fig, ax = plt.subplots(figsize=(20, 8))  # You may need to adjust these values
+
+# Hide the axes
+ax.axis('off')
+
+# Determine column widths - increase width for confidence interval
+colWidths = [0.15, 0.1, 0.1, 0.2, 0.1]
+
+# Create the table with adjusted settings
+the_table = ax.table(cellText=df.values,
+                     colLabels=df.columns,
+                     loc='center',
+                     cellLoc='center',
+                     colColours=["palegreen"] * len(df.columns),
+                     colWidths=colWidths)
+
+# Adjust font size
+the_table.auto_set_font_size(False)
+the_table.set_fontsize(10)  # Adjust the size as needed
+
+# Scale the table to the figure by setting its dimensions
+the_table.scale(1, 1.5)  # The second value increases the row heights
+
+# Tight layout for a neat fit
+plt.tight_layout()
+
+# Save the table as an image file
+plt.savefig('C:/Users/natha/OneDrive/Bureau/MASEF/S1/MC methods FE applied fi/Numerical results/Markovian Bias Numerical results plot.png')
 
 
 ##### TEST for V0_tilde in (4.2) (expected result : 0.1267 around) #####
@@ -195,7 +239,7 @@ def funcG_PathDep (lX):
 
 
 # Run The Simulations
-
+'''
 print("RESULTS FOR THE PATH DEPENDENT EXAMPLE 4.2 (expected result : 0.1267 around)")
 print(" ")
 
@@ -214,22 +258,22 @@ print("95% Confidence Interval US_Path_Dependent_Case:", confidence_interval)
 print("Standard Error US_Path_Dependent_Case:", error)
 print(f"Execution time: {time.time() - start_time} seconds")
 print(" ")
-
+'''
 
 
 
 Method = []
 Mean_value = []
-conf_interval = []
+#conf_interval = []
 statistical_error = []
 Computation_time = []
-for i in range(4, 8):
+for i in range(1, 4):#(4, 8)
     nSamples = 10 ** i
     start_time = time.time()
     estimator, confidence_interval, error = Path_Dependent_Case.MC_estimator(funcG_PathDep, X0, funcMu, Sigma0, Beta, lTimeIntervals, nSamples)
     Computation_time.append(time.time() - start_time)
     Mean_value.append(estimator)
-    conf_interval.append(confidence_interval)
+    #conf_interval.append(confidence_interval)
     statistical_error.append(error)
     Method.append(f"US (N = 10^{i})")
 
@@ -237,22 +281,25 @@ for i in range(4, 8):
     estimator, confidence_interval, error = Euler_Scheme.MC_estimator_EulerScheme_Pathdep(funcG_PathDep, X0, funcMu, Sigma0, T, nDim, mSteps, nSamples)
     Computation_time.append(time.time() - start_time)
     Mean_value.append(estimator)
-    conf_interval.append(confidence_interval)
+    #conf_interval.append(confidence_interval)
     statistical_error.append(error)
     Method.append(f"Euler Scheme (N = 10^{i})")
+
+for i in range(len(Mean_value)):
+    Estimated_bias.append(Mean_value[i] - Mean_value[-2])
 
 # Round numbers and make sure confidence it fits in the cell
 rounded_mean_value = [round(val, 8) for val in Mean_value]
 rounded_statistical_error = [round(val, 9) for val in statistical_error]
 formatted_computation_time = [convert_to_hms(val) for val in Computation_time]
-formatted_conf_interval = [f"[{round(ci[0], 8)}, {round(ci[1], 8)}]" for ci in conf_interval]
+#formatted_conf_interval = [f"[{round(ci[0], 8)}, {round(ci[1], 8)}]" for ci in conf_interval]
 
 # Sample data:
 data = {
     'Method': Method,
     'Mean value': rounded_mean_value,
     'Statistical error': rounded_statistical_error,
-    '95% Confidence Interval': formatted_conf_interval,
+    'Estimated Bias': rounded_Estimated_bias,
     'Computation time': formatted_computation_time
 }
 
@@ -288,4 +335,28 @@ plt.tight_layout()
 
 # Save the table as an image file
 plt.savefig('C:/Users/natha/OneDrive/Bureau/MASEF/S1/MC methods FE applied fi/Numerical results/Path Dependent Numerical results plot.png')
+
+
+##### TEST for V0 in (4.3) - Building the graph of Computation time with Beta #####
+# Parameters
+
+X0 = 0  # Initial value
+T = 1   # Maturity
+nDim = 1    # Dim of process
+mSteps = 10 # Number of time steps in Euler Scheme
+nSamples = 10**5   # Number of simulations of MC
+lMu_0 = [0.2, 0.5]
+
+Sigma0 = 0.5
+Beta = 0.1  # Beta constant
+
+lTimeIntervals = [0, T]
+
+# μ in the provided SDE
+def funcMu(mu_0, x):
+    return mu_0 * np.cos(x)
+# Payoff G in the provided example sin(X_T)
+def funcG(x):
+    return np.sin(x)
+
 

@@ -345,18 +345,64 @@ T = 1   # Maturity
 nDim = 1    # Dim of process
 mSteps = 10 # Number of time steps in Euler Scheme
 nSamples = 10**5   # Number of simulations of MC
-lMu_0 = [0.2, 0.5]
 
 Sigma0 = 0.5
 Beta = 0.1  # Beta constant
 
 lTimeIntervals = [0, T]
 
-# μ in the provided SDE
-def funcMu(mu_0, x):
-    return mu_0 * np.cos(x)
 # Payoff G in the provided example sin(X_T)
 def funcG(x):
     return np.sin(x)
+# μ in the provided SDE
+def funcMu1(mu_0, x):
+    return 0.2 * np.cos(x)
+#Mu1 = 0.2
+# μ in the provided SDE
+def funcMu2(mu_0, x):
+    return 0.5 * np.cos(x)
+#Mu2 = 0.5
 
+# Replace these lists with your actual data points
+beta_values = [0.025*i for i in range(1, 17)]
+
+US_CompTime_Mu1 = []
+US_CompTime_Mu2 = []
+EulerScheme_CompTime_Mu1 = []
+EulerScheme_CompTime_Mu2 = []
+
+for beta in beta_values:
+    start_time = time.time()
+    estimator, confidence_interval, error = Markovian_Case.MC_estimator(funcG, X0, funcMu1, Sigma0, beta, T, nDim, nSamples)
+    US_CompTime_Mu1.append(time.time() - start_time)
+
+    start_time = time.time()
+    estimator, confidence_interval, error = Markovian_Case.MC_estimator(funcG, X0, funcMu2, Sigma0, beta, T, nDim, nSamples)
+    US_CompTime_Mu2.append(time.time() - start_time)
+
+    start_time = time.time()
+    estimator, confidence_interval, error = Euler_Scheme.MC_estimator_EulerScheme_Markovian(funcG, X0, funcMu1, Sigma0, T, nDim, mSteps, nSamples)
+    EulerScheme_CompTime_Mu1.append(time.time() - start_time)
+
+    start_time = time.time()
+    estimator, confidence_interval, error = Euler_Scheme.MC_estimator_EulerScheme_Markovian(funcG, X0, funcMu2, Sigma0, T, nDim, mSteps, nSamples)
+    EulerScheme_CompTime_Mu2.append(time.time() - start_time)
+
+
+# Create the plot
+plt.plot(beta_values, US_CompTime_Mu1, label='US(mu=0.2)')
+plt.plot(beta_values, US_CompTime_Mu2, label='US(mu=0.5)')
+plt.plot(beta_values, EulerScheme_CompTime_Mu1, label='Euler Scheme(mu=0.2)')
+plt.plot(beta_values, EulerScheme_CompTime_Mu2, label='Euler Scheme(mu=0.5)')
+
+# Add a legend
+plt.legend()
+
+# Add axis labels and a title
+plt.xlabel('beta')
+plt.ylabel('Computation time in seconds')
+plt.title('Comparison of the computation time of MLMC and Euler Scheme method')
+
+# Save the figure
+plt.savefig('C:/Users/natha/OneDrive/Bureau/MASEF/S1/MC methods FE applied fi/Numerical results/Computation times in Beta.png', dpi=300, bbox_inches='tight')
 

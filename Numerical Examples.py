@@ -361,7 +361,7 @@ def funcMu2(t, x):
 #Mu2 = 0.5
 
 # Replace these lists with your actual data points
-beta_values = [0.025*i for i in range(1, 200)] #0.025
+beta_values = [0.025*i for i in range(1, 200, 2)] #0.025
 
 US_CompTime_Mu1 = []
 US_CompTime_Mu2 = []

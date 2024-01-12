@@ -52,7 +52,7 @@ def convert_to_hms(seconds):
 X0 = 0  # Initial value
 T = 1   # Maturity
 nDim = 1    # Dim of process
-mSteps = 10 # Number of time steps in Euler Scheme
+#mSteps = 10 # Number of time steps in Euler Scheme
 nSamples = 10**5   # Number of simulations of MC
 
 K = 1   # Strike
@@ -110,9 +110,13 @@ Mean_value = []
 conf_interval = []
 statistical_error = []
 Computation_time = []
-Estimated_bias= []
-for i in range(2, 5): #(4, 9)
+Estimated_bias = []
+for i in range(1, 5):#(4, 9)
     nSamples = 10 ** i
+    if (i%2 == 1):
+        mSteps = np.sqrt(10**(i-1))
+    else:
+        mSteps = np.sqrt(nSamples)
     start_time = time.time()
     estimator, confidence_interval, error = Markovian_Case.MC_estimator(funcG, X0, funcMu, Sigma0, Beta, T, nDim, nSamples)
     Computation_time.append(time.time() - start_time)
@@ -122,12 +126,12 @@ for i in range(2, 5): #(4, 9)
     Method.append(f"US (N = 10^{i})")
 
     start_time = time.time()
-    estimator, confidence_interval, error = Euler_Scheme.MC_estimator_EulerScheme_Markovian(funcG, X0, funcMu, Sigma0, T, nDim, mSteps, nSamples)
+    estimator, confidence_interval, error = Euler_Scheme.MC_estimator_EulerScheme_Markovian(funcG, X0, funcMu, Sigma0, T, nDim, int(mSteps), nSamples)
     Computation_time.append(time.time() - start_time)
     Mean_value.append(estimator)
     conf_interval.append(confidence_interval)
     statistical_error.append(error)
-    Method.append(f"Euler Scheme (N = 10^{i})")
+    Method.append(f"Euler Scheme (nSteps = 10^{i})")
 
 for i in range(len(Mean_value)):
     Estimated_bias.append(Mean_value[i] - Mean_value[-2])
@@ -138,7 +142,7 @@ rounded_mean_value = [round(val, 8) for val in Mean_value]
 rounded_statistical_error = [round(val, 9) for val in statistical_error]
 formatted_computation_time = [convert_to_hms(val) for val in Computation_time]
 formatted_conf_interval = [f"[{round(ci[0], 8)}, {round(ci[1], 8)}]" for ci in conf_interval]
-rounded_Estimated_bias = [round(val,9) for val in Estimated_bias]
+rounded_Estimated_bias = [round(val, 9) for val in Estimated_bias]
 
 # Sample data:
 data = {
@@ -267,8 +271,14 @@ Mean_value = []
 #conf_interval = []
 statistical_error = []
 Computation_time = []
-for i in range(1, 4):#(4, 8)
+Estimated_bias = []
+for i in range(2, 4): #(4, 8)
     nSamples = 10 ** i
+    if (i%2 == 1):
+        mSteps = np.sqrt(10**(i-1))
+    else:
+        mSteps = np.sqrt(nSamples)
+    mSteps = np.sqrt(nSamples)
     start_time = time.time()
     estimator, confidence_interval, error = Path_Dependent_Case.MC_estimator(funcG_PathDep, X0, funcMu, Sigma0, Beta, lTimeIntervals, nSamples)
     Computation_time.append(time.time() - start_time)
@@ -278,7 +288,7 @@ for i in range(1, 4):#(4, 8)
     Method.append(f"US (N = 10^{i})")
 
     start_time = time.time()
-    estimator, confidence_interval, error = Euler_Scheme.MC_estimator_EulerScheme_Pathdep(funcG_PathDep, X0, funcMu, Sigma0, T, nDim, mSteps, nSamples)
+    estimator, confidence_interval, error = Euler_Scheme.MC_estimator_EulerScheme_Pathdep(funcG_PathDep, X0, funcMu, Sigma0, T, nDim, int(mSteps), nSamples)
     Computation_time.append(time.time() - start_time)
     Mean_value.append(estimator)
     #conf_interval.append(confidence_interval)
@@ -292,6 +302,7 @@ for i in range(len(Mean_value)):
 rounded_mean_value = [round(val, 8) for val in Mean_value]
 rounded_statistical_error = [round(val, 9) for val in statistical_error]
 formatted_computation_time = [convert_to_hms(val) for val in Computation_time]
+rounded_Estimated_bias = [round(val, 9) for val in Estimated_bias]
 #formatted_conf_interval = [f"[{round(ci[0], 8)}, {round(ci[1], 8)}]" for ci in conf_interval]
 
 # Sample data:
@@ -336,7 +347,7 @@ plt.tight_layout()
 # Save the table as an image file
 plt.savefig('C:/Users/natha/OneDrive/Bureau/MASEF/S1/MC methods FE applied fi/Numerical results/Path Dependent Numerical results plot.png')
 
-
+'''
 ##### TEST for V0 in (4.3) - Building the graph of Computation time with Beta #####
 # Parameters
 
@@ -406,3 +417,4 @@ plt.title('Comparison of the computation time of MLMC and Euler Scheme method')
 # Save the figure
 plt.savefig('C:/Users/natha/OneDrive/Bureau/MASEF/S1/MC methods FE applied fi/Numerical results/Computation times in Beta.png', dpi=300, bbox_inches='tight')
 
+'''

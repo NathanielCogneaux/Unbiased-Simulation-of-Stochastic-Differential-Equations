@@ -26,25 +26,44 @@ def Euler_Scheme(X0, funcMu, Sigma0, T, mSteps):
 
 # Euler scheme for simulating SDEs over a fixed time grid.
 def Euler_Scheme_PathDep(X0, funcMu, Sigma0, T, mSteps, lTimeIntervals): #mSteps for each subinterval
-    lX_tk = []
-    for k in range(len(lTimeIntervals)):
+    lX = [X0]
+    for k in range(1,len(lTimeIntervals)):
         #time step size
-        dt = (lTimeIntervals[k] - lTimeIntervals[k-1]) / mSteps
+        tk = lTimeIntervals[k]
+        t_kminus1 = lTimeIntervals[k-1]
+        dt = (tk - t_kminus1) / mSteps
         X_tk_tkminus1 = np.zeros(mSteps+1)
 
         # the Euler scheme at X0
-        X[0] = X0
+        X_tk_tkminus1[0] = lX[-1]
         # Get the grid (t0,...,tm=T) with steps dt
-        time_grid = np.linspace(0, T, mSteps + 1)
+        time_grid = np.linspace(t_kminus1, tk, mSteps + 1)
 
         # Euler scheme loop
         for i in range(mSteps):
             # Euler scheme formula
-            X_tk_tkminus1[i+1] = XX_tk_tkminus1[i] + funcMu(time_grid[i], X[i])*dt + Sigma0 * np.random.normal(loc=0.0, scale=np.sqrt(dt))
+            X_tk_tkminus1[i+1] = X_tk_tkminus1[i] + funcMu(time_grid[i], X[i])*dt + Sigma0 * np.random.normal(loc=0.0, scale=np.sqrt(dt))
 
-        lX_tk.append(X_tk_tkminus1[-1])
+        lX.append(X_tk_tkminus1[-1])
 
+    return lX
+
+def Euler_Scheme_Pathdep2(X0, funcMu, Sigma0, T, mSteps):
+    #time step size
+    dt = T / mSteps
+    X = np.zeros(mSteps+1)
+    L=[]
+    # the Euler scheme at X0
+    X[0] = X0
+    # Get the grid (t0,...,tm=T) with steps dt
+    time_grid = np.linspace(0, T, mSteps + 1)
+    # Euler scheme loop
+    for i in range(mSteps):
+        # Euler scheme formula
+        X[i+1] = X[i] + funcMu(time_grid[i], X[i])*dt + Sigma0 * np.random.normal(loc=0.0, scale=np.sqrt(dt))
     return X
+
+
 
 
 """
@@ -94,12 +113,12 @@ def MC_estimator_EulerScheme_Markovian(funcG, X0, funcMu, Sigma0, T, nDim, mStep
 
 
 # We now provide a Monte Carlo estimation of Euler Scheme for a path-dependent payoff
-def MC_estimator_EulerScheme_Pathdep(funcG, X0, funcMu, Sigma0, T, nDim, mSteps, nSamples):
+def MC_estimator_EulerScheme_Pathdep(funcG, X0, funcMu, Sigma0, T,mSteps, nSamples,lTimeIntervals):
 
     g_hats = np.zeros(nSamples)
-
+    step_size = mSteps //(len(lTimeIntervals)-1) #get the right step for getting (t1,...,tn)
     for i in range(nSamples):
-        g_hats[i] = funcG(Euler_Scheme(X0, funcMu, Sigma0, T, mSteps)[1:])
+        g_hats[i] = funcG(Euler_Scheme_Pathdep2(X0, funcMu, Sigma0, T, mSteps)[step_size::step_size])
 
     p = np.mean(g_hats)
     s = np.std(g_hats)

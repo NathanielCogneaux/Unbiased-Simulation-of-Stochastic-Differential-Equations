@@ -42,8 +42,6 @@ def convert_to_hms(seconds):
 
 
 
-
-
 ##### TEST for V0 in (4.2) (expected result : 0.205396 around) #####
 
 
@@ -111,7 +109,7 @@ conf_interval = []
 statistical_error = []
 Computation_time = []
 Estimated_bias = []
-for i in range(1, 5):#(4, 9)
+for i in range(4, 9):
     nSamples = 10 ** i
     if (i%2 == 1):
         mSteps = np.sqrt(10**(i-1))
@@ -272,7 +270,7 @@ Mean_value = []
 statistical_error = []
 Computation_time = []
 Estimated_bias = []
-for i in range(2, 4): #(4, 8)
+for i in range(4, 8):
     nSamples = 10 ** i
     if (i%2 == 1):
         mSteps = np.sqrt(10**(i-1))
@@ -288,7 +286,7 @@ for i in range(2, 4): #(4, 8)
     Method.append(f"US (N = 10^{i})")
 
     start_time = time.time()
-    estimator, confidence_interval, error = Euler_Scheme.MC_estimator_EulerScheme_Pathdep(funcG_PathDep, X0, funcMu, Sigma0, T, nDim, int(mSteps), nSamples)
+    estimator, confidence_interval, error = Euler_Scheme.MC_estimator_EulerScheme_Pathdep(funcG_PathDep, X0, funcMu, Sigma0, T, int(mSteps), nSamples, lTimeIntervals)
     Computation_time.append(time.time() - start_time)
     Mean_value.append(estimator)
     #conf_interval.append(confidence_interval)

@@ -113,10 +113,10 @@ def MC_estimator_EulerScheme_Markovian(funcG, X0, funcMu, Sigma0, T, nDim, mStep
 
 
 # We now provide a Monte Carlo estimation of Euler Scheme for a path-dependent payoff
-def MC_estimator_EulerScheme_Pathdep(funcG, X0, funcMu, Sigma0, T,mSteps, nSamples,lTimeIntervals):
+def MC_estimator_EulerScheme_Pathdep(funcG, X0, funcMu, Sigma0, T,mSteps, nSamples, lTimeIntervals):
 
     g_hats = np.zeros(nSamples)
-    step_size = mSteps //(len(lTimeIntervals)-1) #get the right step for getting (t1,...,tn)
+    step_size = mSteps // (len(lTimeIntervals)-1) #get the right step for getting (t1,...,tn)
     for i in range(nSamples):
         g_hats[i] = funcG(Euler_Scheme_Pathdep2(X0, funcMu, Sigma0, T, mSteps)[step_size::step_size])
 

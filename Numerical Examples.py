@@ -397,7 +397,7 @@ ax1.legend(loc='upper left')
 plt.title('Evolution of Computation Time of US given Beta')
 
 # Save the figure
-plt.savefig('C:/Users/natha/OneDrive/Bureau/MASEF/S1/MC methods FE applied fi/Numerical results/Computation times in Beta.png', dpi=300, bbox_inches='tight')
+plt.savefig('Write/Your/Path/Here', dpi=300, bbox_inches='tight')
 
 
 plt.clf()
@@ -422,4 +422,4 @@ ax2.legend(loc='upper right')
 plt.title('Evolution of the Computation Time and the Variance of US given small Beta')
 
 # Save the figure
-plt.savefig('C:/Users/natha/OneDrive/Bureau/MASEF/S1/MC methods FE applied fi/Numerical results/Computation times in Beta.png', dpi=300, bbox_inches='tight')
+plt.savefig('Write/Your/Path/Here', dpi=300, bbox_inches='tight')

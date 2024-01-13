@@ -73,7 +73,7 @@ def funcG_PathDep(x):
 
 
 # Run The Simulations
-'''
+
 print("RESULTS FOR THE MARKOVIAN EXAMPLE 4.2 (expected result : 0.205396 around)")
 print(" ")
 
@@ -100,9 +100,9 @@ print("95% Confidence Interval US_Path_Dependent_Case:", confidence_interval)
 print("Standard Error US_Path_Dependent_Case:", error)
 print(f"Execution time: {time.time() - start_time} seconds")
 print(" ")
-'''
 
-'''
+
+
 Method = []
 Mean_value = []
 conf_interval = []
@@ -221,7 +221,7 @@ plt.tight_layout()
 
 # Save the table as an image file
 plt.savefig('C:/Users/natha/OneDrive/Bureau/MASEF/S1/MC methods FE applied fi/Numerical results/Markovian Bias Numerical results plot.png')
-'''
+
 
 ##### TEST for V0_tilde in (4.2) (expected result : 0.1267 around) #####
 
@@ -238,7 +238,7 @@ def funcG_PathDep (lX):
 
 
 # Run The Simulations
-'''
+
 print("RESULTS FOR THE PATH DEPENDENT EXAMPLE 4.2 (expected result : 0.1267 around)")
 print(" ")
 
@@ -257,10 +257,10 @@ print("95% Confidence Interval US_Path_Dependent_Case:", confidence_interval)
 print("Standard Error US_Path_Dependent_Case:", error)
 print(f"Execution time: {time.time() - start_time} seconds")
 print(" ")
-'''
 
 
-'''
+
+
 Method = []
 Mean_value = []
 #conf_interval = []
@@ -337,7 +337,7 @@ plt.tight_layout()
 
 # Save the table as an image file
 plt.savefig('C:/Users/natha/OneDrive/Bureau/MASEF/S1/MC methods FE applied fi/Numerical results/Path Dependent Numerical results plot.png')
-'''
+
 
 ##### TEST for V0 in (4.3) - Building the graph of Computation time with Beta #####
 # Parameters

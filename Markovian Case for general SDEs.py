@@ -57,7 +57,7 @@ def Unbiased_Simulation_Markovian_Case_GeneralSDEs(funcG, X0, funcMu, funcSigma,
         # W^1_k + W^2_k loop
         for k in range(1, N_T+1):
             # W^1_k formula
-            W1 = ((funcMu(arrTimeGrid[k], X_hat[k]) - funcMu(arrTimeGrid[k-1], X_hat[k-1]))*arrDeltaW[k])/(arrDeltaT[k]*Sigma)
+            W1 = ((funcMu(arrTimeGrid[k], X_hat[k]) - funcMu(arrTimeGrid[k-1], X_hat[k-1]))*arrDeltaW[k])/(arrDeltaT[k]*funcSigma(arrTimeGrid[k], X_hat[k]))
 
             # W^2_k formula
             A = funcA(arrTimeGrid[k], X_hat[k], funcSigma) - funcA(arrTimeGrid[k-1], X_hat[k-1], funcSigma)
@@ -77,16 +77,12 @@ def Unbiased_Simulation_Markovian_Case_GeneralSDEs(funcG, X0, funcMu, funcSigma,
 
 
 # We now provide a Monte Carlo estimation of the Unbiased Simulation Estimate
-def MC_estimator(funcG, X0, funcMu, Sigma, Beta, T, nDim, nSamples):
+def MC_estimator(funcG, X0, funcMu, funcSigma, Beta, T, nDim, nSamples):
 
     psi_hats = np.zeros(nSamples)
-
-    if nDim > 1:
-        for i in range(nSamples):
-            psi_hats[i] = Unbiased_Simulation_Markovian_Case_MultiD(funcG, X0, funcMu, Sigma, Beta, T, nDim)
-    else:
-        for i in range(nSamples):
-            psi_hats[i] = Unbiased_Simulation_Markovian_Case(funcG, X0, funcMu, Sigma, Beta, T)
+    
+    for i in range(nSamples):
+        psi_hats[i] = Unbiased_Simulation_Markovian_Case_GeneralSDEs(funcG, X0, funcMu, funcSigma, Beta, nDim, T)
 
     p = np.mean(psi_hats)
     s = np.std(psi_hats)

@@ -27,6 +27,8 @@ def RandomTimeGrid(Beta, T):
 
     return lT, N_T
 
+
+
 def Unbiased_Simulation_Markovian_Case_GeneralSDEs(funcG, X0, funcMu, funcSigma, Beta, nDim, T):
     # Get a random discrete time grid
     arrTimeGrid, N_T = RandomTimeGrid(Beta, T)
@@ -51,7 +53,7 @@ def Unbiased_Simulation_Markovian_Case_GeneralSDEs(funcG, X0, funcMu, funcSigma,
         X_hat[k + 1] = X_hat[k] + arrDeltaT[k] * funcMu(arrTimeGrid[k], X_hat[k]) + np.dot(Sigma, arrDeltaW[k])
 
     if N_T > 0:
-        # Initialize the products of the weights W^1_k of the estimator
+        # Initialize the products of the automatic weights
         prodW1_W2 = 1
 
         # W^1_k + W^2_k loop
@@ -71,8 +73,6 @@ def Unbiased_Simulation_Markovian_Case_GeneralSDEs(funcG, X0, funcMu, funcSigma,
 
     # Compute the estimator in the case N_T = 0
     return np.exp(Beta*T)*funcG(X_hat[-1])*Beta**(-1*N_T)
-
-
 
 
 

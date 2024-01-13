@@ -50,7 +50,7 @@ def convert_to_hms(seconds):
 X0 = 0  # Initial value
 T = 1   # Maturity
 nDim = 1    # Dim of process
-#mSteps = 10 # Number of time steps in Euler Scheme
+mSteps = 10     # Number of time steps in Euler Scheme
 nSamples = 10**5   # Number of simulations of MC
 
 K = 1   # Strike
@@ -111,10 +111,7 @@ Computation_time = []
 Estimated_bias = []
 for i in range(4, 9):
     nSamples = 10 ** i
-    if (i%2 == 1):
-        mSteps = np.sqrt(10**(i-1))
-    else:
-        mSteps = np.sqrt(nSamples)
+
     start_time = time.time()
     estimator, confidence_interval, error = Markovian_Case.MC_estimator(funcG, X0, funcMu, Sigma0, Beta, T, nDim, nSamples)
     Computation_time.append(time.time() - start_time)
@@ -272,11 +269,7 @@ Computation_time = []
 Estimated_bias = []
 for i in range(4, 8):
     nSamples = 10 ** i
-    if (i%2 == 1):
-        mSteps = np.sqrt(10**(i-1))
-    else:
-        mSteps = np.sqrt(nSamples)
-    mSteps = np.sqrt(nSamples)
+
     start_time = time.time()
     estimator, confidence_interval, error = Path_Dependent_Case.MC_estimator(funcG_PathDep, X0, funcMu, Sigma0, Beta, lTimeIntervals, nSamples)
     Computation_time.append(time.time() - start_time)

@@ -13,7 +13,6 @@ import Markovian_Case
 import Path_Dependent_Case
 
 
-
 # function to convert time into hours, minutes, and seconds
 def convert_to_hms(seconds):
     # Extract whole seconds and fractional part
@@ -359,11 +358,13 @@ def funcMu(t, x):
 
 
 # Replace these lists with your actual data points
-beta_values = [0.025*i for i in range(1, 250, 2)] #0.025
-#beta_values = [0.05*i for i in range(1, 20)]
+#beta_values = [0.025*i for i in range(1, 250, 2)] #0.025
+#beta_values = [0.05*i for i in range(1, 10)]
+beta_values = [0.005*i for i in range(1, 101)]
 
 US_CompTime = []
 EulerScheme_CompTime = []
+US_Var = []
 
 start_time = time.time()
 estimator, confidence_interval, error = Euler_Scheme.MC_estimator_EulerScheme_Markovian(funcG, X0, funcMu, Sigma0, T, nDim, mSteps, nSamples)
@@ -373,6 +374,7 @@ for beta in beta_values:
     start_time = time.time()
     estimator, confidence_interval, error = Markovian_Case.MC_estimator(funcG, X0, funcMu, Sigma0, beta, T, nDim, nSamples)
     US_CompTime.append(time.time() - start_time)
+    US_Var.append((error*np.sqrt(nSamples))**2)
     EulerScheme_CompTime.append(EulerScheme_t)
 
 plt.clf()
@@ -398,3 +400,26 @@ plt.title('Evolution of Computation Time of US given Beta')
 plt.savefig('C:/Users/natha/OneDrive/Bureau/MASEF/S1/MC methods FE applied fi/Numerical results/Computation times in Beta.png', dpi=300, bbox_inches='tight')
 
 
+plt.clf()
+fig, ax1 = plt.subplots()
+
+# Plotting the US and Euler Scheme Computation Times
+ax1.plot(beta_values, US_CompTime, 'g-', label='US Computation Time')
+ax1.plot(beta_values, EulerScheme_CompTime, 'r--', label='Euler Scheme Computation Time')
+ax1.set_xlabel('Beta')
+ax1.set_ylabel('Computation time in seconds', color='g')
+ax1.tick_params('y', colors='g')
+ax1.legend(loc='upper left')
+
+# Creating a secondary axis for Variance
+ax2 = ax1.twinx()
+ax2.plot(beta_values, US_Var, 'b-', label='US Variance')
+ax2.set_ylabel('Variance', color='b')
+ax2.tick_params('y', colors='b')
+ax2.legend(loc='upper right')
+
+# Title
+plt.title('Evolution of the Computation Time and the Variance of US given small Beta')
+
+# Save the figure
+plt.savefig('C:/Users/natha/OneDrive/Bureau/MASEF/S1/MC methods FE applied fi/Numerical results/Computation times in Beta.png', dpi=300, bbox_inches='tight')

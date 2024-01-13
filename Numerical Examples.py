@@ -121,7 +121,7 @@ for i in range(4, 9):
     Method.append(f"US (N = 10^{i})")
 
     start_time = time.time()
-    estimator, confidence_interval, error = Euler_Scheme.MC_estimator_EulerScheme_Markovian(funcG, X0, funcMu, Sigma0, T, nDim, int(mSteps), nSamples)
+    estimator, confidence_interval, error = Euler_Scheme.MC_estimator_EulerScheme_Markovian(funcG, X0, funcMu, Sigma0, T, nDim, mSteps, nSamples)
     Computation_time.append(time.time() - start_time)
     Mean_value.append(estimator)
     conf_interval.append(confidence_interval)
@@ -279,7 +279,7 @@ for i in range(4, 8):
     Method.append(f"US (N = 10^{i})")
 
     start_time = time.time()
-    estimator, confidence_interval, error = Euler_Scheme.MC_estimator_EulerScheme_Pathdep(funcG_PathDep, X0, funcMu, Sigma0, T, int(mSteps), nSamples, lTimeIntervals)
+    estimator, confidence_interval, error = Euler_Scheme.MC_estimator_EulerScheme_Pathdep(funcG_PathDep, X0, funcMu, Sigma0, T, mSteps, nSamples, lTimeIntervals)
     Computation_time.append(time.time() - start_time)
     Mean_value.append(estimator)
     #conf_interval.append(confidence_interval)
@@ -403,7 +403,7 @@ plt.legend()
 # Add axis labels and a title
 plt.xlabel('beta')
 plt.ylabel('Computation time in seconds')
-plt.title('Comparison of the computation time of MLMC and Euler Scheme method')
+plt.title('Comparison of the computation time of US and Euler Scheme method')
 
 # Save the figure
 plt.savefig('C:/Users/natha/OneDrive/Bureau/MASEF/S1/MC methods FE applied fi/Numerical results/Computation times in Beta.png', dpi=300, bbox_inches='tight')

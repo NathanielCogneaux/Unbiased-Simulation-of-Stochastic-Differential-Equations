@@ -1,5 +1,5 @@
 # The unbiased simulation algorithm
-# The Markovian case
+# The Markovian case for General SDEs
 
 import numpy as np
 

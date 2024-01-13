@@ -102,7 +102,7 @@ print(f"Execution time: {time.time() - start_time} seconds")
 print(" ")
 '''
 
-
+'''
 Method = []
 Mean_value = []
 conf_interval = []
@@ -221,7 +221,7 @@ plt.tight_layout()
 
 # Save the table as an image file
 plt.savefig('C:/Users/natha/OneDrive/Bureau/MASEF/S1/MC methods FE applied fi/Numerical results/Markovian Bias Numerical results plot.png')
-
+'''
 
 ##### TEST for V0_tilde in (4.2) (expected result : 0.1267 around) #####
 
@@ -260,7 +260,7 @@ print(" ")
 '''
 
 
-
+'''
 Method = []
 Mean_value = []
 #conf_interval = []
@@ -337,8 +337,8 @@ plt.tight_layout()
 
 # Save the table as an image file
 plt.savefig('C:/Users/natha/OneDrive/Bureau/MASEF/S1/MC methods FE applied fi/Numerical results/Path Dependent Numerical results plot.png')
-
 '''
+
 ##### TEST for V0 in (4.3) - Building the graph of Computation time with Beta #####
 # Parameters
 
@@ -354,58 +354,47 @@ Sigma0 = 0.5
 def funcG(x):
     return np.sin(x)
 # μ in the provided SDE
-def funcMu1(t, x):
+def funcMu(t, x):
     return 0.2 * np.cos(x)
-#Mu1 = 0.2
-# μ in the provided SDE
-def funcMu2(t, x):
-    return 0.5 * np.cos(x)
-#Mu2 = 0.5
+
 
 # Replace these lists with your actual data points
-beta_values = [0.025*i for i in range(1, 200, 2)] #0.025
+beta_values = [0.025*i for i in range(1, 250, 2)] #0.025
+#beta_values = [0.05*i for i in range(1, 20)]
 
-US_CompTime_Mu1 = []
-US_CompTime_Mu2 = []
-EulerScheme_CompTime_Mu1 = []
-EulerScheme_CompTime_Mu2 = []
-
-start_time = time.time()
-estimator, confidence_interval, error = Euler_Scheme.MC_estimator_EulerScheme_Markovian(funcG, X0, funcMu1, Sigma0, T, nDim, mSteps, nSamples)
-EulerScheme_t1_Mu1 = time.time() - start_time
+US_CompTime = []
+EulerScheme_CompTime = []
 
 start_time = time.time()
-estimator, confidence_interval, error = Euler_Scheme.MC_estimator_EulerScheme_Markovian(funcG, X0, funcMu2, Sigma0, T, nDim, mSteps, nSamples)
-EulerScheme_t2_Mu2 = time.time() - start_time
+estimator, confidence_interval, error = Euler_Scheme.MC_estimator_EulerScheme_Markovian(funcG, X0, funcMu, Sigma0, T, nDim, mSteps, nSamples)
+EulerScheme_t = time.time() - start_time
 
 for beta in beta_values:
     start_time = time.time()
-    estimator, confidence_interval, error = Markovian_Case.MC_estimator(funcG, X0, funcMu1, Sigma0, beta, T, nDim, nSamples)
-    US_CompTime_Mu1.append(time.time() - start_time)
-
-    start_time = time.time()
-    estimator, confidence_interval, error = Markovian_Case.MC_estimator(funcG, X0, funcMu2, Sigma0, beta, T, nDim, nSamples)
-    US_CompTime_Mu2.append(time.time() - start_time)
-
-    EulerScheme_CompTime_Mu1.append(EulerScheme_t1_Mu1)
-    EulerScheme_CompTime_Mu2.append(EulerScheme_t2_Mu2)
+    estimator, confidence_interval, error = Markovian_Case.MC_estimator(funcG, X0, funcMu, Sigma0, beta, T, nDim, nSamples)
+    US_CompTime.append(time.time() - start_time)
+    EulerScheme_CompTime.append(EulerScheme_t)
 
 plt.clf()
-# Create the plot
-plt.plot(beta_values, US_CompTime_Mu1, label='US(mu=0.2)')
-plt.plot(beta_values, US_CompTime_Mu2, label='US(mu=0.5)')
-plt.plot(beta_values, EulerScheme_CompTime_Mu1, label='Euler Scheme(mu=0.2)')
-plt.plot(beta_values, EulerScheme_CompTime_Mu2, label='Euler Scheme(mu=0.5)')
+# Plot
+fig, ax1 = plt.subplots()
+
+# Plot the US Computation Time on the primary y-axis
+ax1.plot(beta_values, US_CompTime, 'g-', label='US Computation Time')
+ax1.set_xlabel('Beta')
+ax1.set_ylabel('Computation time in seconds', color='g')
+ax1.tick_params('y', colors='g')
+
+# Plot the Euler Scheme Computation Time on the primary y-axis as well
+ax1.plot(beta_values, EulerScheme_CompTime, 'r--', label='Euler Scheme Computation Time')
 
 # Add a legend
-plt.legend()
+ax1.legend(loc='upper left')
 
-# Add axis labels and a title
-plt.xlabel('beta')
-plt.ylabel('Computation time in seconds')
-plt.title('Comparison of the computation time of US and Euler Scheme method')
+# Title
+plt.title('Evolution of Computation Time of US given Beta')
 
 # Save the figure
 plt.savefig('C:/Users/natha/OneDrive/Bureau/MASEF/S1/MC methods FE applied fi/Numerical results/Computation times in Beta.png', dpi=300, bbox_inches='tight')
 
-'''
+

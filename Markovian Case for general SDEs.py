@@ -27,7 +27,7 @@ def RandomTimeGrid(Beta, T):
 
     return lT, N_T
 
-def Unbiased_Simulation_Markovian_Case_GeneralSDEs(funcG, X0, funcMu, funcSigma, Beta, nDimT):
+def Unbiased_Simulation_Markovian_Case_GeneralSDEs(funcG, X0, funcMu, funcSigma, Beta, nDim, T):
     # Get a random discrete time grid
     arrTimeGrid, N_T = RandomTimeGrid(Beta, T)
 

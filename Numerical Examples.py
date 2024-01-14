@@ -364,10 +364,12 @@ beta_values = [0.005*i for i in range(1, 101)]
 US_CompTime = []
 EulerScheme_CompTime = []
 US_Var = []
+EulerScheme_Var = []
 
 start_time = time.time()
 estimator, confidence_interval, error = Euler_Scheme.MC_estimator_EulerScheme_Markovian(funcG, X0, funcMu, Sigma0, T, nDim, mSteps, nSamples)
 EulerScheme_t = time.time() - start_time
+EulerScheme_Var.append((error*np.sqrt(nSamples))**2)
 
 for beta in beta_values:
     start_time = time.time()
@@ -375,6 +377,9 @@ for beta in beta_values:
     US_CompTime.append(time.time() - start_time)
     US_Var.append((error*np.sqrt(nSamples))**2)
     EulerScheme_CompTime.append(EulerScheme_t)
+
+    estimator, confidence_interval, error = Euler_Scheme.MC_estimator_EulerScheme_Markovian(funcG, X0, funcMu, Sigma0, T, nDim, mSteps, nSamples)
+    EulerScheme_Var.append((error*np.sqrt(nSamples))**2)
 
 plt.clf()
 # Plot
@@ -402,20 +407,24 @@ plt.savefig('Write/Your/Path/Here', dpi=300, bbox_inches='tight')
 plt.clf()
 fig, ax1 = plt.subplots()
 
-# Plotting the US and Euler Scheme Computation Times
+# Plotting the US Computation Time
 ax1.plot(beta_values, US_CompTime, 'g-', label='US Computation Time')
-ax1.plot(beta_values, EulerScheme_CompTime, 'r--', label='Euler Scheme Computation Time')
 ax1.set_xlabel('Beta')
 ax1.set_ylabel('Computation time in seconds', color='g')
 ax1.tick_params('y', colors='g')
-ax1.legend(loc='upper left')
 
 # Creating a secondary axis for Variance
 ax2 = ax1.twinx()
 ax2.plot(beta_values, US_Var, 'b-', label='US Variance')
+ax2.plot(beta_values, EulerScheme_Var, 'r-', label='Euler Scheme Variance')  # Updated label
 ax2.set_ylabel('Variance', color='b')
 ax2.tick_params('y', colors='b')
-ax2.legend(loc='upper right')
+
+# Updating the legend to include all plots
+lines, labels = ax1.get_legend_handles_labels()
+lines2, labels2 = ax2.get_legend_handles_labels()
+ax2.legend(lines + lines2, labels + labels2, loc='upper right')
+
 
 # Title
 plt.title('Evolution of the Computation Time and the Variance of US given small Beta')

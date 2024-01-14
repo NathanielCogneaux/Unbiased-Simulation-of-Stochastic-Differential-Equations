@@ -3,9 +3,7 @@
 
 import numpy as np
 
-
 #np.random.seed(123)
-
 
 # We introduce a random discrete time grid with β > 0 a fixed positive constant,
 # (τ_i)i>0 be a sequence of i.i.d. E(β)-exponential random variables.

@@ -1,4 +1,4 @@
 Unbiased Simulation of Stochastic Differential Equations
 
-Nathaniel Cogneaux
+Nathaniel Cogneaux,
 Paul-Emile Galine

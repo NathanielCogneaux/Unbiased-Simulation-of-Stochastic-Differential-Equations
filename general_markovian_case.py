@@ -30,16 +30,12 @@ def RandomTimeGrid(Beta, T):
 
 
 def Unbiased_Simulation_Markovian_Case_GeneralSDEs(funcG, X0, funcMu, funcSigma, Beta, nDim, T):
-    # Get a random discrete time grid
     arrTimeGrid, N_T = RandomTimeGrid(Beta, T)
 
-    # Compute (DeltaT_k)k≥0
     arrDeltaT = np.diff(arrTimeGrid, axis = 0)
 
-    # Initialize array to store X_hat values
     X_hat = np.zeros((N_T + 2, nDim))
 
-    # Set initial value
     X_hat[0] = X0
 
     # Simulate the Delta of the d-dimensional Brownian motion W
@@ -50,10 +46,9 @@ def Unbiased_Simulation_Markovian_Case_GeneralSDEs(funcG, X0, funcMu, funcSigma,
     # Euler scheme loop
     for k in range(N_T+1):
         # Euler scheme formula
-        X_hat[k + 1] = X_hat[k] + arrDeltaT[k] * funcMu(arrTimeGrid[k], X_hat[k]) + np.dot(Sigma, arrDeltaW[k])
+        X_hat[k + 1] = X_hat[k] + arrDeltaT[k] * funcMu(arrTimeGrid[k], X_hat[k]) + np.dot(funcSigma, arrDeltaW[k])
 
     if N_T > 0:
-        # Initialize the products of the automatic weights
         prodW1_W2 = 1
 
         # W^1_k + W^2_k loop

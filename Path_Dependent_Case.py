@@ -46,7 +46,7 @@ def BrownianMotionSimulation_Interval(Beta, t1, t2):
 # μ(t,Xt1∧t,...,Xtn∧t), ie when the function μ differs in different subintervals
 # However in the provided examples we did not make use of this function but feel free to adapt it in
 # the Psi_US_1D_Recursive function changing line 82 by
-#Xk_tilde[j+1] = Xk_tilde[j] + DeltaT_tkminus1_tk[j] * funcMu_k(k, Xk, arr_tkminus1_tk[j], Xk_tilde[j], len(lTimeIntervals), funcMu) + Sigma * DeltaW_tkminus1_tk[j]
+# Xk_tilde[j+1] = Xk_tilde[j] + DeltaT_tkminus1_tk[j] * funcMu_k(k, Xk, arr_tkminus1_tk[j], Xk_tilde[j], len(lTimeIntervals), funcMu) + Sigma * DeltaW_tkminus1_tk[j]
 # and line 90 by
 #prodWk_tilde *= (funcMu_k(k, Xk, arr_tkminus1_tk[j], Xk_tilde[j], len(lTimeIntervals), funcMu) - funcMu_k(k, Xk, arr_tkminus1_tk[j-1], Xk_tilde[j-1], len(lTimeIntervals), funcMu)) * DeltaW_tkminus1_tk[j] / (DeltaT_tkminus1_tk[j] * Sigma)
 def funcMu_k(k, Xk, t, Xj_tilde, numIter, funcMu):
